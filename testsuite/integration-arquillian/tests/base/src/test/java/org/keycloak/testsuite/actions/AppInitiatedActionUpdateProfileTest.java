@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +31,7 @@ import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.admin.ApiUtil;
-import org.keycloak.testsuite.pages.ErrorPage;
-import org.keycloak.testsuite.pages.LoginUpdateProfileEditUsernameAllowedPage;
+import org.keycloak.testsuite.pages.*;
 import org.keycloak.testsuite.util.UserBuilder;
 
 /**
@@ -48,12 +46,20 @@ public class AppInitiatedActionUpdateProfileTest extends AbstractAppInitiatedAct
         return UserModel.RequiredAction.UPDATE_PROFILE.name();
     }
     
-    @Page
     protected LoginUpdateProfileEditUsernameAllowedPage updateProfilePage;
 
-    @Page
     protected ErrorPage errorPage;
-    
+
+    protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        super.before();
+        errorPage = new ErrorPage(driver);
+        updateProfilePage = new LoginUpdateProfileEditUsernameAllowedPage(driver);
+        loginPage = new LoginPage(driver);
+    }
+
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
     }

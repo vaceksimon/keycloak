@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -49,18 +48,22 @@ public abstract class AbstractRequiredActionUpdateEmailTest extends AbstractTest
 	@Rule
 	public AssertEvents events = new AssertEvents(this);
 
-	@Page
 	protected LoginPage loginPage;
 
-	@Page
 	protected UpdateEmailPage updateEmailPage;
 
-	@Page
 	protected AppPage appPage;
 
         @Drone
         @SecondBrowser
         protected WebDriver driver2;
+
+	@Before
+	public void before() {
+		appPage = new AppPage(driver);
+		loginPage = new LoginPage(driver);
+		updateEmailPage = new UpdateEmailPage(driver);
+	}
 
 	@Before
 	public void beforeTest() {

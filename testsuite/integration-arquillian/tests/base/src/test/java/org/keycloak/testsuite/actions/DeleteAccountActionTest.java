@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,14 +30,18 @@ public class DeleteAccountActionTest extends AbstractTestRealmKeycloakTest {
   @Rule
   public AssertEvents events = new AssertEvents(this);
 
-  @Page
   public DeleteAccountActionConfirmPage deleteAccountPage;
 
-  @Page
   protected LoginPage loginPage;
 
-  @Page
   protected ErrorPage errorPage;
+
+  @Before
+  public void before() {
+    loginPage = new LoginPage(driver);
+    errorPage = new ErrorPage(driver);
+    deleteAccountPage = new DeleteAccountActionConfirmPage(driver);
+  }
 
   @Override
   public void configureTestRealm(RealmRepresentation testRealm) {

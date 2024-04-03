@@ -28,10 +28,8 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-
-import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.UserResource;
@@ -55,11 +53,16 @@ public class RequiredActionUpdateEmailTestWithVerificationTest extends AbstractR
 	@Rule
 	public GreenMailRule greenMail = new GreenMailRule();
 
-	@Page
 	private InfoPage infoPage;
 
-	@Page
 	private ErrorPage errorPage;
+
+	@Before
+	public void before() {
+		super.before();
+		infoPage = new InfoPage(driver);
+		errorPage = new ErrorPage(driver);
+	}
 
 	protected void prepareUser(UserRepresentation user){
 		user.setEmailVerified(true);

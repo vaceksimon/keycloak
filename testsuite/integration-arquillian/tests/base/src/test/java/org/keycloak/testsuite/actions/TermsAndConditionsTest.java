@@ -17,7 +17,6 @@
 package org.keycloak.testsuite.actions;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,17 +53,21 @@ public class TermsAndConditionsTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected TermsAndConditionsPage termsPage;
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
+    }
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        termsPage = new TermsAndConditionsPage(driver);
     }
 
     @Before

@@ -16,8 +16,8 @@
  */
 package org.keycloak.testsuite.actions;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.events.Details;
@@ -46,17 +46,21 @@ public class RequiredActionMultipleActionsTest extends AbstractTestRealmKeycloak
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginPasswordUpdatePage changePasswordPage;
 
-    @Page
     protected LoginUpdateProfileEditUsernameAllowedPage updateProfilePage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        changePasswordPage = new LoginPasswordUpdatePage(driver);
+        updateProfilePage = new LoginUpdateProfileEditUsernameAllowedPage(driver);
+    }
 
     @Test
     public void updateProfileAndPassword() throws Exception {

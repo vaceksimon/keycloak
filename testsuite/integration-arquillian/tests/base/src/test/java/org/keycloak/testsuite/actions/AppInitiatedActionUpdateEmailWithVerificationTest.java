@@ -26,8 +26,8 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.TokenVerifier;
@@ -49,11 +49,16 @@ public class AppInitiatedActionUpdateEmailWithVerificationTest extends AbstractA
 	@Rule
 	public GreenMailRule greenMail = new GreenMailRule();
 
-	@Page
 	protected InfoPage infoPage;
 
-	@Page
 	protected ErrorPage errorPage;
+
+	@Before
+	public void before() {
+		super.before();
+		infoPage = new InfoPage(driver);
+		errorPage = new ErrorPage(driver);
+	}
 
 	@Override
 	public void configureTestRealm(RealmRepresentation testRealm) {

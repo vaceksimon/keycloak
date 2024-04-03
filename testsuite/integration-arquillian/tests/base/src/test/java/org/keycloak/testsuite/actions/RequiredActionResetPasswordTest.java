@@ -19,11 +19,7 @@ package org.keycloak.testsuite.actions;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.authenticators.browser.UsernameFormFactory;
 import org.keycloak.events.Details;
@@ -78,17 +74,21 @@ public class RequiredActionResetPasswordTest extends AbstractTestRealmKeycloakTe
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernameOnlyPage;
 
-    @Page
     protected LoginPasswordUpdatePage changePasswordPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        changePasswordPage = new LoginPasswordUpdatePage(driver);
+    }
 
     @After
     public void after() {

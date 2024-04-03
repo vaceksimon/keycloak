@@ -19,7 +19,6 @@ package org.keycloak.testsuite.actions;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -122,19 +121,14 @@ public class RequiredActionTotpSetupTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginConfigTotpPage totpPage;
 
-    @Page
     protected RegisterPage registerPage;
 
     @Drone
@@ -142,6 +136,15 @@ public class RequiredActionTotpSetupTest extends AbstractTestRealmKeycloakTest {
     private WebDriver driver2;
 
     protected TimeBasedOTP totp = new TimeBasedOTP();
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        totpPage = new LoginConfigTotpPage(driver);
+        registerPage = new RegisterPage(driver);
+    }
 
     @Test
     public void setupTotpRegister() {

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.keycloak.userprofile.UserProfileConstants.ROLE_USER;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.UserProfileResource;
 import org.keycloak.events.Details;
@@ -37,6 +38,11 @@ import org.keycloak.representations.userprofile.config.UPConfig;
 import org.keycloak.validate.validators.LengthValidator;
 
 public class AppInitiatedActionUpdateEmailTest extends AbstractAppInitiatedActionUpdateEmailTest {
+
+    @Before
+    public void before() {
+        super.before();
+    }
 
     @Test
     public void updateEmail() throws Exception {

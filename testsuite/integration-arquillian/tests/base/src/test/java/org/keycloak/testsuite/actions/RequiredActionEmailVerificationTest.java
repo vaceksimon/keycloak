@@ -19,7 +19,6 @@ package org.keycloak.testsuite.actions;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.actiontoken.verifyemail.VerifyEmailActionToken;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -99,25 +98,18 @@ public class RequiredActionEmailVerificationTest extends AbstractTestRealmKeyclo
     @Rule
     public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected VerifyEmailPage verifyEmailPage;
 
-    @Page
     protected RegisterPage registerPage;
 
-    @Page
     protected InfoPage infoPage;
 
-    @Page
     protected ProceedPage proceedPage;
 
-    @Page
     protected ErrorPage errorPage;
 
     private String testUserId;
@@ -134,6 +126,14 @@ public class RequiredActionEmailVerificationTest extends AbstractTestRealmKeyclo
 
     @Before
     public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        registerPage = new RegisterPage(driver);
+        infoPage = new InfoPage(driver);
+        proceedPage = new ProceedPage(driver);
+        errorPage = new ErrorPage(driver);
+
         ApiUtil.removeUserByUsername(testRealm(), "test-user@localhost");
         UserRepresentation user = UserBuilder.create().enabled(true)
                 .username("test-user@localhost")

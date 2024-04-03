@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -78,16 +77,12 @@ public class RequiredActionUpdateProfileWithUserProfileTest extends AbstractTest
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginUpdateProfileEditUsernameAllowedPage updateProfilePage;
 
-    @Page
     protected ErrorPage errorPage;
 
     @Override
@@ -103,6 +98,14 @@ public class RequiredActionUpdateProfileWithUserProfileTest extends AbstractTest
         client_scope_optional.setOptionalClientScopes(Collections.singletonList(SCOPE_DEPARTMENT));
         client_scope_optional.setRedirectUris(Collections.singletonList("*"));
 
+    }
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        updateProfilePage = new LoginUpdateProfileEditUsernameAllowedPage(driver);
+        errorPage = new ErrorPage(driver);
     }
 
     @Before

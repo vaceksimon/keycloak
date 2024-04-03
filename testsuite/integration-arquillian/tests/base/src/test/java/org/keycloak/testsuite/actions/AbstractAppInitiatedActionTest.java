@@ -18,7 +18,7 @@ package org.keycloak.testsuite.actions;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Rule;
 import org.keycloak.protocol.oidc.OIDCLoginProtocolService;
 import org.keycloak.testsuite.AbstractTestRealmKeycloakTest;
@@ -54,14 +54,18 @@ public abstract class AbstractAppInitiatedActionTest extends AbstractTestRealmKe
     protected static final String SUCCESS = "success";
     protected static final String CANCELLED = "cancelled";
 
-    @Page
     protected LoginPage loginPage;
-    
-    @Page
+
     protected AppPage appPage;
     
     @Rule
     public AssertEvents events = new AssertEvents(this);
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     protected abstract String getAiaAction();
     
