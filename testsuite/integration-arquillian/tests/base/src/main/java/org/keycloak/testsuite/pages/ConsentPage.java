@@ -17,9 +17,12 @@
 
 package org.keycloak.testsuite.pages;
 
+import org.keycloak.testsuite.util.OAuthClient;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:mstrukel@redhat.com">Marko Strukelj</a>
@@ -31,6 +34,14 @@ public class ConsentPage extends AbstractPage {
 
     @FindBy(id = "kc-cancel")
     private WebElement cancelButton;
+
+    public ConsentPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void confirm() {
         submitButton.click();

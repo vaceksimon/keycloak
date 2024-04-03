@@ -20,27 +20,28 @@ package org.keycloak.testsuite.pages;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.keycloak.models.Constants;
 import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.testsuite.auth.page.AccountFields;
 import org.keycloak.testsuite.auth.page.PasswordFields;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
  */
 public class RegisterPage extends AbstractPage {
 
-    @Page
     private AccountFields.AccountErrors accountErrors;
 
-    @Page
     private PasswordFields.PasswordErrors passwordErrors;
 
     @FindBy(id = "firstName")
@@ -78,6 +79,18 @@ public class RegisterPage extends AbstractPage {
 
     @FindBy(linkText = "« Back to Login")
     private WebElement backToLoginLink;
+
+    public RegisterPage() {
+
+    }
+
+    public RegisterPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void register(String firstName, String lastName, String email, String username, String password, String passwordConfirm) {
         register(firstName, lastName, email, username, password, passwordConfirm, null, null, null);

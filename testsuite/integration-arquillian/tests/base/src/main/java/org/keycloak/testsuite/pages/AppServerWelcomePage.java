@@ -19,21 +19,22 @@ package org.keycloak.testsuite.pages;
 import static org.junit.Assert.assertTrue;
 import static org.keycloak.testsuite.util.WaitUtils.waitForPageToLoad;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.keycloak.testsuite.adapter.page.AppServerContextRoot;
 import org.keycloak.testsuite.auth.page.login.OIDCLogin;
 import org.keycloak.testsuite.util.DroneUtils;
 import org.keycloak.testsuite.util.JavascriptBrowser;
 import org.keycloak.testsuite.util.URLUtils;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Igor</a>
  */
 public class AppServerWelcomePage extends AppServerContextRoot {
 
-    @Page
     @JavascriptBrowser
     protected OIDCLogin loginPage;
 
@@ -45,6 +46,12 @@ public class AppServerWelcomePage extends AppServerContextRoot {
 
     @FindBy(xpath = "//div[text() = 'Logout']")
     private WebElement logoutLink;
+
+    public AppServerWelcomePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public boolean isCurrent() {

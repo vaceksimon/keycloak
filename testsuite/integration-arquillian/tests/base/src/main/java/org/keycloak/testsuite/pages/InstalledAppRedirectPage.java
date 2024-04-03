@@ -26,10 +26,14 @@ import org.junit.Assert;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.services.Urls;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * Page represented by code.ftl. It is used by "Installed applications" (KeycloakInstalled)
@@ -46,6 +50,18 @@ public class InstalledAppRedirectPage extends AbstractPage {
 
     @FindBy(className = "alert-error")
     private WebElement errorBox;
+
+    public InstalledAppRedirectPage() {
+
+    }
+
+    public InstalledAppRedirectPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     @Override
     public void open() {

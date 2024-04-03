@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.keycloak.testsuite.util.DroneUtils;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * Login page with the list of authentication mechanisms, which are available to the user (Password, OTP, WebAuthn...)
@@ -32,6 +36,19 @@ public class SelectAuthenticatorPage extends LanguageComboboxAwarePage {
     public static final String SECURITY_KEY = "Passkey";
 
     public static final String RECOVERY_AUTHN_CODES = "Recovery Authentication Code";
+
+    public SelectAuthenticatorPage() {
+
+    }
+
+    public SelectAuthenticatorPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
+
     /**
      * Return list of names like for example [ "Password", "Authenticator Application", "Passkey" ]
      */

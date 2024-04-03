@@ -3,6 +3,7 @@ package org.keycloak.testsuite.pages;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -15,6 +16,10 @@ public class LoginUsernameOnlyPage extends LoginPage {
 
     @FindBy(id = "input-error-username")
     private WebElement usernameError;
+
+    public LoginUsernameOnlyPage(WebDriver driver) {
+        super(driver);
+    }
 
     @Override
     public void login(String username) {

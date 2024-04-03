@@ -17,9 +17,13 @@
 package org.keycloak.testsuite.pages;
 
 import org.junit.Assert;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.UIUtils;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * <p>A page that contains the logout other sessions checkbox.</p>
@@ -30,6 +34,18 @@ public abstract class LogoutSessionsPage extends LanguageComboboxAwarePage {
 
     @FindBy(id = "logout-sessions")
     private WebElement logoutSessionsCheckbox;
+
+    protected LogoutSessionsPage() {
+
+    }
+
+    public LogoutSessionsPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     @Override
     public void assertCurrent() {

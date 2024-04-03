@@ -24,8 +24,11 @@ import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.clickLink;
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
@@ -35,7 +38,7 @@ import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
  */
 public class LoginPage extends LanguageComboboxAwarePage {
 
-    @ArquillianResource
+//    @ArquillianResource
     protected OAuthClient oauth;
 
     @FindBy(xpath = "//html")
@@ -76,6 +79,14 @@ public class LoginPage extends LanguageComboboxAwarePage {
 
     @FindBy(className = "instruction")
     private WebElement instruction;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void login(String username, String password) {
         clearUsernameInputAndWaitIfNecessary();

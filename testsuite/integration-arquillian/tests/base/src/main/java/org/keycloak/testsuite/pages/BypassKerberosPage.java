@@ -17,8 +17,12 @@
 
 package org.keycloak.testsuite.pages;
 
+import org.keycloak.testsuite.util.OAuthClient;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -28,7 +32,19 @@ public class BypassKerberosPage extends AbstractPage {
     @FindBy(name = "continue")
     private WebElement continueButton;
 
-   public boolean isCurrent() {
+    public BypassKerberosPage() {
+
+    }
+
+    public BypassKerberosPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
+
+    public boolean isCurrent() {
         return driver.getTitle().equals("Sign in to test") || driver.getTitle().equals("Anmeldung bei test");
     }
 

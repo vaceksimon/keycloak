@@ -20,8 +20,11 @@ package org.keycloak.testsuite.pages;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.util.DroneUtils;
 import org.keycloak.testsuite.util.OAuthClient;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -30,6 +33,14 @@ public class InfoPage extends LanguageComboboxAwarePage {
 
     @ArquillianResource
     protected OAuthClient oauth;
+
+    public InfoPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     @FindBy(className = "instruction")
     private WebElement infoMessage;

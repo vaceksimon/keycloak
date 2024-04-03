@@ -19,12 +19,15 @@ package org.keycloak.testsuite.pages;
 
 import org.junit.Assert;
 import org.keycloak.testsuite.util.DroneUtils;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * Provides some generic utils available on most of login pages (Language combobox, Link "Try another way" etc)
@@ -50,6 +53,18 @@ public abstract class LanguageComboboxAwarePage extends AbstractPage {
 
     @FindBy(id = "account")
     private WebElement accountLink;
+
+    public LanguageComboboxAwarePage() {
+
+    }
+
+    public LanguageComboboxAwarePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public String getLanguageDropdownText() {
         return languageText.getText();

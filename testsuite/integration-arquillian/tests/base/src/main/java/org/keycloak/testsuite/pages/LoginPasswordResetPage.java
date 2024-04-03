@@ -16,10 +16,14 @@
  */
 package org.keycloak.testsuite.pages;
 
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -46,6 +50,18 @@ public class LoginPasswordResetPage extends LanguageComboboxAwarePage {
 
     @FindBy(id = "kc-info-wrapper")
     private WebElement infoWrapper;
+
+    public LoginPasswordResetPage() {
+
+    }
+
+    public LoginPasswordResetPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void changePassword() {
         submitButton.click();

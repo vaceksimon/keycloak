@@ -23,7 +23,8 @@ import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.UIUtils;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.By;
@@ -31,13 +32,15 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
  */
 public class LoginUpdateProfilePage extends AbstractPage {
 
-    @Page
     private UpdateProfileErrors errorsPage;
 
     @FindBy(id = "firstName")
@@ -60,6 +63,17 @@ public class LoginUpdateProfilePage extends AbstractPage {
 
     @FindBy(className = "alert-error")
     private WebElement loginAlertErrorMessage;
+
+    public LoginUpdateProfilePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+
+        errorsPage = new UpdateProfileErrors();
+        PageFactory.initElements(driver, errorsPage);
+    }
 
     public void update(String firstName, String lastName) {
         prepareUpdate().firstName(firstName).lastName(lastName).submit();

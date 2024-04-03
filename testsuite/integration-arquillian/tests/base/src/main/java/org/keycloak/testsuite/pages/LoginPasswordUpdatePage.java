@@ -16,8 +16,12 @@
  */
 package org.keycloak.testsuite.pages;
 
+import org.keycloak.testsuite.util.OAuthClient;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.isElementVisible;
 
@@ -43,6 +47,18 @@ public class LoginPasswordUpdatePage extends LogoutSessionsPage {
     
     @FindBy(name = "cancel-aia")
     private WebElement cancelAIAButton;
+
+    public LoginPasswordUpdatePage() {
+
+    }
+
+    public LoginPasswordUpdatePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void changePassword(String newPassword, String passwordConfirm) {
         newPasswordInput.sendKeys(newPassword);
