@@ -1,22 +1,21 @@
-package org.keycloak.services.resources;
+package org.keycloak.fedcm;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.models.KeycloakSession;
+import org.keycloak.services.resource.RootResourceProvider;
 
 import java.util.*;
 
-@Path("/.well-known")
-public class WellKnownFileResource {
+public class WellKnownFileProvider implements RootResourceProvider {
 
     private final KeycloakSession session;
 
-    public WellKnownFileResource(KeycloakSession session) {
+    public WellKnownFileProvider(KeycloakSession session) {
         this.session = session;
     }
 
@@ -29,8 +28,18 @@ public class WellKnownFileResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
+        //todo in the next iteration, well-known file will be realm based and acting as eTLD+1; remove hard-coded realm
         providerUrls.put("provider_urls", List.of("http://localhost:8080/realms/fedcm-realm/fedcm/config.json"));
         return Response.ok(providerUrls).type(MediaType.APPLICATION_JSON).build();
     }
 
+    @Override
+    public Object getResource() {
+        return this;
+    }
+
+    @Override
+    public void close() {
+
+    }
 }

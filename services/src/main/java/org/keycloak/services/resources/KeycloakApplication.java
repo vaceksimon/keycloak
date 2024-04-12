@@ -95,6 +95,7 @@ public class KeycloakApplication extends Application {
             loadConfig();
 
             classes.add(RobotsResource.class);
+            classes.add(RootResource.class);
             classes.add(RealmsResource.class);
             if (Profile.isFeatureEnabled(Profile.Feature.ADMIN_API)) {
                 classes.add(AdminRoot.class);
@@ -112,8 +113,6 @@ public class KeycloakApplication extends Application {
 
             singletons.add(new ObjectMapperResolver());
             classes.add(WelcomeResource.class);
-
-            classes.add(WellKnownFileResource.class);
 
             if (Profile.isFeatureEnabled(Profile.Feature.MULTI_SITE)) {
                 // If we are running in multi-site mode, we need to add a resource which to expose
