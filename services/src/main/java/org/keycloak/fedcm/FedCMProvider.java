@@ -28,7 +28,6 @@ import org.keycloak.sessions.RootAuthenticationSessionModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FedCMProvider implements RealmResourceProvider {
@@ -51,7 +50,7 @@ public class FedCMProvider implements RealmResourceProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response fetchConfigFile(@HeaderParam("Sec-Fetch-Dest") String secFetchDest) {
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         KeycloakContext keycloakCtx = session.getContext();
@@ -90,11 +89,11 @@ public class FedCMProvider implements RealmResourceProvider {
         // todo what to put in domain_hints
 
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
         AuthResult authResult = (new AuthenticationManager()).authenticateIdentityCookie(session, session.getContext().getRealm());
         if (authResult == null) { // user is probably not authenticated
-            return Response.serverError().build();
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         UserModel userModel = authResult.getUser();
@@ -143,7 +142,7 @@ public class FedCMProvider implements RealmResourceProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response fetchClientMetadata(@HeaderParam("Sec-Fetch-Dest") String secFetchDest, @QueryParam("client_id") int client_id) {
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         Map<String, Object> metadata = new HashMap<>();
@@ -162,14 +161,28 @@ public class FedCMProvider implements RealmResourceProvider {
     @POST
     @Path("id_assert")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response fetchIdentityAssertion(@HeaderParam("Sec-Fetch-Dest") String secFetchDest, @FormParam("account_id") String account_id, @FormParam("client_id") String client_id, @FormParam("nonce") String nonce, @QueryParam("disclosure_text_shown") boolean disclosure_text_shown) {
+    public Response fetchIdentityAssertion(@HeaderParam("Sec-Fetch-Dest") String secFetchDest,
+                                           @HeaderParam("Origin") String origin,
+                                           @FormParam("account_id") String account_id,
+                                           @FormParam("client_id") String client_id,
+                                           @FormParam("nonce") String nonce,
+                                           @QueryParam("disclosure_text_shown") boolean disclosure_text_shown) {
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         RealmModel realm = session.getContext().getRealm();
 
         ClientModel client = realm.getClientByClientId(client_id);
+        if(client == null) {
+            return idAssertError("unauthorized_client", Response.Status.UNAUTHORIZED);
+        }
+
+
+        //todo parse origin
+        if (!client.getRootUrl().equals(origin)) {
+            return idAssertError("unauthorized_client", Response.Status.UNAUTHORIZED);
+        }
 
         // todo is this the right way to do it?
         session.getContext().setClient(client);
@@ -179,10 +192,13 @@ public class FedCMProvider implements RealmResourceProvider {
 
         AuthResult authResult = new AuthenticationManager().authenticateIdentityCookie(session, realm);
         if (authResult == null) {
-            return Response.serverError().build();
+            return idAssertError("access_denied", Response.Status.FORBIDDEN);
         }
 
         UserModel user = authResult.getUser();
+        if (!user.getId().equals(account_id)) {
+            return idAssertError("invalid_request", Response.Status.BAD_REQUEST);
+        }
         UserSessionModel userSession = authResult.getSession();
 
 
@@ -213,10 +229,34 @@ public class FedCMProvider implements RealmResourceProvider {
         accessTokenResponseBuilder.generateIDToken();
 
 
-        Map<String, Object> token = new HashMap<>();
-        // 2) id token gets filled with data by building
-        token.put("token", accessTokenResponseBuilder.build().getIdToken());
+        Map<String, String> token = new HashMap<>();
+        if (client_id.equals("example-idtoken")) {
+            token.put("token", accessTokenResponseBuilder.build().getIdToken());
+        } else if (client_id.equals("example-accesstoken")) {
+            token.put("token", accessTokenResponseBuilder.build().getToken());
+        } else {
+            return idAssertError("unauthorized_client", Response.Status.UNAUTHORIZED);
+        }
+
         return Response.ok(token).type(MediaType.APPLICATION_JSON).build();
+    }
+
+    private Response idAssertError(String errorType, Response.Status responseStatus) {
+        // todo Refactor
+        KeycloakContext keycloakCtx = session.getContext();
+        String serverString = keycloakCtx.getAuthServerUrl().toString();
+        String realmString = keycloakCtx.getRealm().getName();
+        String errorUri = serverString + "realms/" + realmString + '/' + factoryID + "/error?error-type=" + errorType;
+
+        Map<String, String> error = new HashMap<>() {{
+            put("code", errorType);
+            put("url", errorUri);
+        }};
+        return Response.status(responseStatus).entity(new HashMap<>() {{
+                    put("error", error);
+                }})
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     @POST
@@ -224,14 +264,13 @@ public class FedCMProvider implements RealmResourceProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response disconnect(@HeaderParam("Sec-Fetch-Dest") String secFetchDest, @HeaderParam("Origin") String client_origin, @FormParam("client_id") String client_id, @FormParam("account_hint") String account_hint) {
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         Map<String, String> id = new HashMap<>();
         AuthResult authResult = (new AuthenticationManager()).authenticateIdentityCookie(session, session.getContext().getRealm());
         if (authResult == null) {
-            // todo signal error differently
-            return Response.serverError().build();
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         UserModel userModel = authResult.getUser();
@@ -242,6 +281,25 @@ public class FedCMProvider implements RealmResourceProvider {
                 .type(MediaType.APPLICATION_JSON)
                 .header("Access-Control-Allow-Credentials", true)
                 .build();
+    }
+
+    @GET
+    @Path("error")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response disconnect(@QueryParam("error-type") String error_type) {
+        Response.ResponseBuilder rb = Response.status(Response.Status.FOUND);
+        switch (error_type) {
+            case "unauthorized_client":
+                rb.location(java.net.URI.create("https://www.keycloak.org/getting-started/getting-started-zip#_secure_the_first_application"));
+                break;
+            case "access_denied":
+                rb.location(java.net.URI.create("https://www.keycloak.org/getting-started/getting-started-zip#_log_in_to_the_admin_console"));
+                break;
+            case "invalid_request":
+                rb.location(java.net.URI.create("https://www.youtube.com/watch?v=mPEdQjH5nFw"));
+                break;
+        }
+        return rb.build();
     }
 
     @Override

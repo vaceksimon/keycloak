@@ -26,7 +26,7 @@ public class WellKnownFileResource {
     public Response getWellKnownFile(@HeaderParam("Sec-Fetch-Dest") String secFetchDest) {
         Map<String, Object> providerUrls = new HashMap<>();
         if (!secFetchDest.equals("webidentity")) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         providerUrls.put("provider_urls", List.of("http://localhost:8080/realms/fedcm-realm/fedcm/config.json"));
