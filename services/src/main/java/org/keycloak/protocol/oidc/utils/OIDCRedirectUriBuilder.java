@@ -50,7 +50,7 @@ public abstract class OIDCRedirectUriBuilder {
 
     public abstract OIDCRedirectUriBuilder addParam(String paramName, String paramValue);
 
-    public abstract Response build();
+    public abstract Response build(boolean successfulAuth);
 
 
     public static OIDCRedirectUriBuilder fromUri(String baseUri, OIDCResponseMode responseMode, KeycloakSession session, AuthenticatedClientSessionModel clientSession) {
@@ -87,9 +87,12 @@ public abstract class OIDCRedirectUriBuilder {
         }
 
         @Override
-        public Response build() {
+        public Response build(boolean successfulAuth) {
             URI redirectUri = uriBuilder.build();
             Response.ResponseBuilder location = Response.status(302).location(redirectUri);
+            if(successfulAuth) {
+                location.header("Set-Login", "logged-in");
+            }
             return location.build();
         }
     }
@@ -121,7 +124,7 @@ public abstract class OIDCRedirectUriBuilder {
         }
 
         @Override
-        public Response build() {
+        public Response build(boolean successfulAuth) {
             if (fragment != null) {
                 uriBuilder.encodedFragment(fragment.toString());
             }
@@ -150,7 +153,7 @@ public abstract class OIDCRedirectUriBuilder {
         }
 
         @Override
-        public Response build() {
+        public Response build(boolean successfulAuth) {
             StringBuilder builder = new StringBuilder();
             URI redirectUri = uriBuilder.build();
 
@@ -210,7 +213,7 @@ public abstract class OIDCRedirectUriBuilder {
         }
 
         @Override
-        public Response build() {
+        public Response build(boolean successfulAuth) {
             KeycloakContext context = session.getContext();
             ClientModel client = context.getClient();
             RealmModel realm = client.getRealm();
