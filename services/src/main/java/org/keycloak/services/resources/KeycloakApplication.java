@@ -94,6 +94,7 @@ public class KeycloakApplication extends Application {
 
             classes.add(RobotsResource.class);
             classes.add(RealmsResource.class);
+            classes.add(RootResource.class);
             if (Profile.isFeatureEnabled(Profile.Feature.ADMIN_API)) {
                 classes.add(AdminRoot.class);
             }
