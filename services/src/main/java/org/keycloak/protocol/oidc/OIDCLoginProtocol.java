@@ -284,7 +284,7 @@ public class OIDCLoginProtocol implements LoginProtocol {
                 if (!clientConfig.isExcludeIssuerFromAuthResponse()) {
                     redirectUri.addParam(OAuth2Constants.ISSUER, clientSession.getNote(OIDCLoginProtocol.ISSUER));
                 }
-                return redirectUri.build();
+                return redirectUri.build(true);
             }
 
             AccessTokenResponse res = responseBuilder.build();
@@ -300,7 +300,7 @@ public class OIDCLoginProtocol implements LoginProtocol {
             }
         }
 
-        return redirectUri.build();
+        return redirectUri.build(true);
     }
 
     // For FAPI 1.0 Advanced
@@ -342,7 +342,7 @@ public class OIDCLoginProtocol implements LoginProtocol {
         // Remove authenticationSession from current tab
         new AuthenticationSessionManager(session).removeTabIdInAuthenticationSession(realm, authSession);
 
-        return redirectUri.build();
+        return redirectUri.build(false);
     }
 
     private String translateError(Error error) {

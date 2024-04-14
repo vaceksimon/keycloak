@@ -281,7 +281,7 @@ public class AuthorizationEndpoint extends AuthorizationEndpointBase {
             errorResponseBuilder.addParam(OAuth2Constants.ISSUER, Urls.realmIssuer(session.getContext().getUri().getBaseUri(), realm.getName()));
         }
 
-        return errorResponseBuilder.build();
+        return errorResponseBuilder.build(false);
     }
 
     private void updateAuthenticationSession() {
