@@ -457,8 +457,7 @@ public class RefreshTokenTest extends AbstractKeycloakTest {
             oauth.fillLoginForm("alice", "alice");
 
             String aliceCode = oauth.getCurrentQuery().get(OAuth2Constants.CODE);
-            WebClient webClient = DroneHtmlUnitDriver.class.cast(driver).getWebClient();
-            webClient.getCookieManager().clearCookies();
+            driver.manage().deleteAllCookies();
             oauth.openLoginForm();
             driver.manage().addCookie(authSessionCookie);
             oauth.fillLoginForm("bob", "bob");
