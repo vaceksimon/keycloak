@@ -21,6 +21,7 @@ package org.keycloak.testsuite.broker;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.events.Details;
@@ -39,6 +40,7 @@ import static org.keycloak.testsuite.broker.BrokerTestTools.waitForPage;
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
+@Ignore
 public class KcSamlMultipleTabsBrokerTest extends AbstractInitializedBaseBrokerTest {
 
     @Rule

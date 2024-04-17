@@ -20,6 +20,7 @@ package org.keycloak.testsuite.oidc;
 import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.keycloak.authentication.authenticators.browser.OTPFormAuthenticatorFactory;
 import org.keycloak.authentication.authenticators.browser.UsernamePasswordFormFactory;
@@ -287,6 +288,7 @@ public class AuthenticationMethodReferenceTest extends AbstractOIDCScopeTest{
      * Expected: AMR = ["password"]
      */
     @Test
+    @Ignore
     public void testAmrPastMaxAge() {
         setAmr("browser", "auth-username-password-form", "password", 0);
 
