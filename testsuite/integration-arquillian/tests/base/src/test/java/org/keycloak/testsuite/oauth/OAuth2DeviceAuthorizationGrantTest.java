@@ -23,7 +23,6 @@ import static org.keycloak.models.OAuth2DeviceConfig.DEFAULT_OAUTH2_DEVICE_CODE_
 import static org.keycloak.models.OAuth2DeviceConfig.DEFAULT_OAUTH2_DEVICE_POLLING_INTERVAL;
 
 import org.apache.http.client.methods.HttpGet;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -91,14 +90,18 @@ public class OAuth2DeviceAuthorizationGrantTest extends AbstractKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected OAuth2DeviceVerificationPage verificationPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    @Before
+    public void before() {
+        verificationPage = new OAuth2DeviceVerificationPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

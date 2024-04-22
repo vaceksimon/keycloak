@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.oauth;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -62,11 +61,15 @@ public class AuthorizationCodeTest extends AbstractKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     private ErrorPage errorPage;
 
-    @Page
     private InstalledAppRedirectPage installedAppPage;
+
+    @Before
+    public void before() {
+        errorPage = new ErrorPage(driver);
+        installedAppPage = new InstalledAppRedirectPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

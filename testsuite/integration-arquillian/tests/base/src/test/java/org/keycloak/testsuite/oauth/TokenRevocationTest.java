@@ -43,7 +43,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -121,8 +120,12 @@ public class TokenRevocationTest extends AbstractKeycloakTest {
         restHttpClient.close();
     }
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @Test
     public void testRevokeToken() throws Exception {

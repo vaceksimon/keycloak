@@ -18,7 +18,6 @@
 package org.keycloak.testsuite.oauth;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -109,8 +108,12 @@ public class OfflineTokenTest extends AbstractKeycloakTest {
     private static String offlineClientAppUri;
     private static String serviceAccountUserId;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @Rule
     public AssertEvents events = new AssertEvents(this);

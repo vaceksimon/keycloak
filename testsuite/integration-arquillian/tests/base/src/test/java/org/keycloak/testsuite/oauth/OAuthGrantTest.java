@@ -17,8 +17,8 @@
 package org.keycloak.testsuite.oauth;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
@@ -73,17 +73,21 @@ public class OAuthGrantTest extends AbstractKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    @Before
+    public void before() {
+        grantPage = new OAuthGrantPage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        appPage = new AppPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

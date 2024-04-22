@@ -18,7 +18,6 @@
 package org.keycloak.testsuite.oauth;
 
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -77,8 +76,12 @@ public class LogoutTest extends AbstractKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void beforeAbstractKeycloakTest() throws Exception {

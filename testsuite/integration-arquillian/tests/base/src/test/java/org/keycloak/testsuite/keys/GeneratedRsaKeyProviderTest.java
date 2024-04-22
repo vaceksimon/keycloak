@@ -17,7 +17,7 @@
 
 package org.keycloak.testsuite.keys;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.common.util.MultivaluedHashMap;
@@ -55,11 +55,15 @@ public class GeneratedRsaKeyProviderTest extends AbstractKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

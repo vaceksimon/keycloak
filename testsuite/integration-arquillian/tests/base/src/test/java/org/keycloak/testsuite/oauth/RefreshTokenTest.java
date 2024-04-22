@@ -120,8 +120,12 @@ public class RefreshTokenTest extends AbstractKeycloakTest {
 
     public static final int ALLOWED_CLOCK_SKEW = 3;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @Rule
     public AssertEvents events = new AssertEvents(this);

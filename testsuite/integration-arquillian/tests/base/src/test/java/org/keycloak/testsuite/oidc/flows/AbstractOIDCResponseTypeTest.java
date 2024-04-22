@@ -17,7 +17,7 @@
 
 package org.keycloak.testsuite.oidc.flows;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.OAuthErrorException;
@@ -60,16 +60,19 @@ public abstract class AbstractOIDCResponseTypeTest extends AbstractTestRealmKeyc
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
     }
-
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

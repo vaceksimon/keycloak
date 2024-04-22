@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,17 +54,21 @@ public class OIDCBackwardsCompatibilityTest extends AbstractTestRealmKeycloakTes
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

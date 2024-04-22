@@ -20,7 +20,6 @@ package org.keycloak.testsuite.oidc;
 import com.google.common.collect.ImmutableMap;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +29,6 @@ import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.ProtocolMappersResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.authenticators.client.JWTClientAuthenticator;
-import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.common.util.Time;
@@ -121,17 +119,21 @@ public class OIDCAdvancedRequestParamsTest extends AbstractTestRealmKeycloakTest
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

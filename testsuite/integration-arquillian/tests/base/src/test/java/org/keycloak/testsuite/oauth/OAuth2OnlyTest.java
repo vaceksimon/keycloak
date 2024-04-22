@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,9 +52,12 @@ public class OAuth2OnlyTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected ErrorPage errorPage;
 
+    @Before
+    public void before() {
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

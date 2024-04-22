@@ -102,25 +102,29 @@ public class RPInitiatedLogoutTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
 
-    @Page
     private ErrorPage errorPage;
 
     private String APP_REDIRECT_URI;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

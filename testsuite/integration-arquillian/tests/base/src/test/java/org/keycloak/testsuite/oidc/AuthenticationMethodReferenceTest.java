@@ -17,7 +17,6 @@
 
 package org.keycloak.testsuite.oidc;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,11 +62,15 @@ public class AuthenticationMethodReferenceTest extends AbstractOIDCScopeTest{
     private static String TOTP_SECRET = "totpsecret";
 
     // pages
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginTotpPage = new LoginTotpPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     private TimeBasedOTP totp = new TimeBasedOTP();
     private static String passwordUserId;
