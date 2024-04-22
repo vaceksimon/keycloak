@@ -1,6 +1,5 @@
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,13 +49,10 @@ public class ConditionalUserAttributeAuthenticatorTest extends AbstractTestRealm
     private final static String APPROVED_BY_SUBGROUP_USER = "approved-by-subgroup";
     private final static String PASSWORD = "password";
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernameOnlyPage;
 
-    @Page
     protected PasswordPage passwordPage;
 
-    @Page
     protected ErrorPage errorPage;
 
     @Rule
@@ -64,6 +60,13 @@ public class ConditionalUserAttributeAuthenticatorTest extends AbstractTestRealm
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {}
+
+    @Before
+    public void before() {
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        passwordPage = new PasswordPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Before
     public void configureUserProfile() {

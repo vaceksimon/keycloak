@@ -17,7 +17,6 @@
 package org.keycloak.testsuite.forms;
 
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -78,22 +77,16 @@ public class BruteForceTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginPasswordResetPage passwordResetPage;
 
-    @Page
     protected LoginPasswordUpdatePage passwordUpdatePage;
 
-    @Page
     private RegisterPage registerPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
     private TimeBasedOTP totp = new TimeBasedOTP();
@@ -162,7 +155,14 @@ public class BruteForceTest extends AbstractTestRealmKeycloakTest {
     }
 
     @Before
-    public void before() throws MalformedURLException {
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        passwordResetPage = new LoginPasswordResetPage(driver);
+        passwordUpdatePage = new LoginPasswordUpdatePage(driver);
+        registerPage = new RegisterPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+
         totp = new TimeBasedOTP();
     }
 

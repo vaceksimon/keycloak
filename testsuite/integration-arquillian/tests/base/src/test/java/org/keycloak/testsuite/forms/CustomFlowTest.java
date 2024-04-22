@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -71,6 +70,33 @@ import static org.keycloak.testsuite.util.Matchers.statusCodeIs;
  * @author Stan Silvert ssilvert@redhat.com (C) 2016 Red Hat Inc.
  */
 public class CustomFlowTest extends AbstractFlowTest {
+
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected TermsAndConditionsPage termsPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected RegisterPage registerPage;
+
+    private static String userId;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        termsPage = new TermsAndConditionsPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        registerPage = new RegisterPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
@@ -180,31 +206,6 @@ public class CustomFlowTest extends AbstractFlowTest {
 
         testContext.setInitialized(true);
     }
-
-
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected TermsAndConditionsPage termsPage;
-
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected RegisterPage registerPage;
-
-    private static String userId;
 
     /**
      * KEYCLOAK-3506

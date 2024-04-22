@@ -17,7 +17,6 @@
 
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,11 +43,15 @@ public class AuthenticationFlowCallbackProviderTest extends AbstractTestRealmKey
 
     protected static final String DEFAULT_FLOW = "newCallbackFlow";
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    @Before
+    public void before() {
+        errorPage = new ErrorPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,27 +65,16 @@ import static org.keycloak.testsuite.auth.page.AuthRealm.TEST;
  */
 public class LoginTotpTest extends AbstractTestRealmKeycloakTest {
 
-    @Override
-    public void configureTestRealm(RealmRepresentation testRealm) {
-        UserRepresentation user = RealmRepUtil.findUser(testRealm, "test-user@localhost");
-        UserBuilder.edit(user)
-                   .totpSecret("totpSecret")
-                   .otpEnabled();
-    }
-
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
     private TimeBasedOTP totp = new TimeBasedOTP();
@@ -94,8 +82,20 @@ public class LoginTotpTest extends AbstractTestRealmKeycloakTest {
     private int lifespan;
 
     @Before
-    public void before() throws MalformedURLException {
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+
         totp = new TimeBasedOTP();
+    }
+
+    @Override
+    public void configureTestRealm(RealmRepresentation testRealm) {
+        UserRepresentation user = RealmRepUtil.findUser(testRealm, "test-user@localhost");
+        UserBuilder.edit(user)
+                   .totpSecret("totpSecret")
+                   .otpEnabled();
     }
 
     @Test

@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,12 +25,8 @@ import org.keycloak.representations.idm.AuthenticationExecutionRepresentation;
 import org.keycloak.representations.idm.AuthenticationFlowRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.testsuite.AssertEvents;
-import org.keycloak.testsuite.pages.AppPage;
+import org.keycloak.testsuite.pages.*;
 import org.keycloak.testsuite.pages.AppPage.RequestType;
-import org.keycloak.testsuite.pages.ErrorPage;
-import org.keycloak.testsuite.pages.LoginPage;
-import org.keycloak.testsuite.pages.LoginPasswordUpdatePage;
-import org.keycloak.testsuite.pages.RegisterPage;
 import org.keycloak.testsuite.util.ExecutionBuilder;
 import org.keycloak.testsuite.util.FlowBuilder;
 
@@ -40,6 +35,28 @@ import org.keycloak.testsuite.util.FlowBuilder;
  * @author Stan Silvert ssilvert@redhat.com (C) 2016 Red Hat Inc.
  */
 public class CustomRegistrationFlowTest extends AbstractFlowTest {
+
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected RegisterPage registerPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        registerPage = new RegisterPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
@@ -71,24 +88,6 @@ public class CustomRegistrationFlowTest extends AbstractFlowTest {
 
         testRealm().flows().addExecution(execution);
     }
-
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected RegisterPage registerPage;
 
     @Test
     public void registerUserSuccess() {

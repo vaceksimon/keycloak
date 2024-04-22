@@ -2,8 +2,8 @@ package org.keycloak.testsuite.forms;
 
 import static org.wildfly.common.Assert.assertTrue;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.models.AuthenticationExecutionModel;
@@ -24,13 +24,10 @@ import java.util.stream.Collectors;
 
 public class ResetOtpTest extends AbstractTestRealmKeycloakTest {
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected ResetOtpPage resetOtpPage;
 
-    @Page
     protected LoginPasswordResetPage resetPasswordPage;
 
     private static RealmResource realmResource;
@@ -42,6 +39,13 @@ public class ResetOtpTest extends AbstractTestRealmKeycloakTest {
     private static final String RESET_OTP_TEST_USER_REMOVE_NONE = "reset-otp-test-user-remove-none";
     private static final String RESET_OTP_TEST_USER_REMOVE_ONE = "reset-otp-test-user-remove-one";
     private static final String RESET_OTP_TEST_USER_REMOVE_ALL = "reset-otp-test-user-remove-all";
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        resetOtpPage = new ResetOtpPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

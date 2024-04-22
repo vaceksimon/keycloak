@@ -56,6 +56,51 @@ public class BrowserButtonsTest extends AbstractTestRealmKeycloakTest {
 
     private String userId;
 
+    private int expectedMessagesCount;
+
+    @Rule
+    public GreenMailRule greenMail = new GreenMailRule();
+
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected InfoPage infoPage;
+
+    protected VerifyEmailPage verifyEmailPage;
+
+    protected LoginPasswordResetPage resetPasswordPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected LoginUpdateProfilePage updateProfilePage;
+
+    protected LoginExpiredPage loginExpiredPage;
+
+    protected RegisterPage registerPage;
+
+    protected OAuthGrantPage grantPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        infoPage = new InfoPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        updateProfilePage = new LoginUpdateProfilePage(driver);
+        loginExpiredPage = new LoginExpiredPage(driver);
+        registerPage = new RegisterPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+    }
+
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
     }
@@ -76,48 +121,6 @@ public class BrowserButtonsTest extends AbstractTestRealmKeycloakTest {
 
         oauth.clientId("test-app");
     }
-
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule();
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected InfoPage infoPage;
-
-    @Page
-    protected VerifyEmailPage verifyEmailPage;
-
-    @Page
-    protected LoginPasswordResetPage resetPasswordPage;
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected LoginUpdateProfilePage updateProfilePage;
-
-    @Page
-    protected LoginExpiredPage loginExpiredPage;
-
-    @Page
-    protected RegisterPage registerPage;
-
-    @Page
-    protected OAuthGrantPage grantPage;
-
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
-    private int expectedMessagesCount;
-
 
     // KEYCLOAK-4670 - Flow 1
     @Test

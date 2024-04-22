@@ -3,11 +3,11 @@ package org.keycloak.testsuite.forms;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.AuthenticationFlow;
@@ -65,37 +65,41 @@ import static org.keycloak.common.Profile.Feature.RECOVERY_CODES;
 @EnableFeature(value = RECOVERY_CODES, skipRestart = true)
 public class RecoveryAuthnCodesAuthenticatorTest extends AbstractTestRealmKeycloakTest {
 
-    private static final String BROWSER_FLOW_WITH_RECOVERY_AUTHN_CODES = "Browser with Recovery Authentication Codes";
-
-    private static final int BRUTE_FORCE_FAIL_ATTEMPTS = 3;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected LoginUsernameOnlyPage loginUsernameOnlyPage;
-
-    @Page
-    protected EnterRecoveryAuthnCodePage enterRecoveryAuthnCodePage;
-
-    @Page
-    protected SetupRecoveryAuthnCodesPage setupRecoveryAuthnCodesPage;
-
-    @Page
-    protected SelectAuthenticatorPage selectAuthenticatorPage;
-
-    @Page
-    protected PasswordPage passwordPage;
-
-    @Page
-    protected AppPage appPage;
-
     @Drone
     @SecondBrowser
     private WebDriver driver2;
 
     @Rule
     public AssertEvents events = new AssertEvents(this);
+
+    private static final String BROWSER_FLOW_WITH_RECOVERY_AUTHN_CODES = "Browser with Recovery Authentication Codes";
+
+    private static final int BRUTE_FORCE_FAIL_ATTEMPTS = 3;
+
+    protected LoginPage loginPage;
+
+    protected LoginUsernameOnlyPage loginUsernameOnlyPage;
+
+    protected EnterRecoveryAuthnCodePage enterRecoveryAuthnCodePage;
+
+    protected SetupRecoveryAuthnCodesPage setupRecoveryAuthnCodesPage;
+
+    protected SelectAuthenticatorPage selectAuthenticatorPage;
+
+    protected PasswordPage passwordPage;
+
+    protected AppPage appPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        enterRecoveryAuthnCodePage = new EnterRecoveryAuthnCodePage(driver);
+        setupRecoveryAuthnCodesPage = new SetupRecoveryAuthnCodesPage(driver);
+        selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
+        passwordPage = new PasswordPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

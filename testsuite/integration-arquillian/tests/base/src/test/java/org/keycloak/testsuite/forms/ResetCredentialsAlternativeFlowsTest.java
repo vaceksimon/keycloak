@@ -67,40 +67,44 @@ public class ResetCredentialsAlternativeFlowsTest extends AbstractAppInitiatedAc
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernameOnlyPage;
 
-    @Page
     protected PasswordPage passwordPage;
 
-    @Page
     protected RegisterPage registerPage;
 
-    @Page
     protected LoginPasswordResetPage resetPasswordPage;
 
-    @Page
     protected LoginPasswordUpdatePage updatePasswordPage;
 
-    @Page
     protected LoginConfigTotpPage totpPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected AppPage appPage;
 
     protected TimeBasedOTP totp = new TimeBasedOTP();
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        passwordPage = new PasswordPage(driver);
+        registerPage = new RegisterPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        totpPage = new LoginConfigTotpPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        errorPage = new ErrorPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

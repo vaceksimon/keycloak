@@ -32,9 +32,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
@@ -159,17 +159,21 @@ public class VerifyProfileTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertAdminEvents assertAdminEvents = new AssertAdminEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected VerifyProfilePage verifyProfilePage;
 
     @ArquillianResource
     protected OAuthClient oauth;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        verifyProfilePage = new VerifyProfilePage(driver);
+    }
 
     @Test
     public void testDisplayName() {

@@ -17,8 +17,8 @@
 package org.keycloak.testsuite.forms;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.authentication.AuthenticationFlow;
@@ -82,26 +82,30 @@ public class RegisterTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected RegisterPage registerPage;
-
-    @Page
-    protected VerifyEmailPage verifyEmailPage;
-
-    @Page
-    protected LoginPasswordResetPage resetPasswordPage;
-
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected RegisterPage registerPage;
+
+    protected VerifyEmailPage verifyEmailPage;
+
+    protected LoginPasswordResetPage resetPasswordPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        registerPage = new RegisterPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

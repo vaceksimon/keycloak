@@ -22,7 +22,6 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.actiontoken.resetcred.ResetCredentialsActionToken;
-import org.jboss.arquillian.graphene.page.Page;
 import org.keycloak.common.constants.ServiceAccountConstants;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.events.Details;
@@ -126,34 +125,38 @@ public class ResetPasswordTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected InfoPage infoPage;
-
-    @Page
-    protected VerifyEmailPage verifyEmailPage;
-
-    @Page
-    protected LoginPasswordResetPage resetPasswordPage;
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected LogoutConfirmPage logoutConfirmPage;
-
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected InfoPage infoPage;
+
+    protected VerifyEmailPage verifyEmailPage;
+
+    protected LoginPasswordResetPage resetPasswordPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected LogoutConfirmPage logoutConfirmPage;
+
     private int expectedMessagesCount;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        infoPage = new InfoPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+    }
 
     @Test
     public void resetPasswordLink() throws IOException, MessagingException {

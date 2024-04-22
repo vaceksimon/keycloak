@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,10 +28,8 @@ import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.AssertEvents;
 import org.keycloak.testsuite.AbstractTestRealmKeycloakTest;
-import org.keycloak.testsuite.pages.AppPage;
+import org.keycloak.testsuite.pages.*;
 import org.keycloak.testsuite.pages.AppPage.RequestType;
-import org.keycloak.testsuite.pages.LoginPage;
-import org.keycloak.testsuite.pages.LoginTotpPage;
 import org.keycloak.testsuite.util.GreenMailRule;
 import org.keycloak.testsuite.util.RealmRepUtil;
 import org.keycloak.testsuite.util.UserBuilder;
@@ -44,6 +41,24 @@ import java.net.MalformedURLException;
  * @author Stan Silvert ssilvert@redhat.com (C) 2016 Red Hat Inc.
  */
 public class LoginHotpTest extends AbstractTestRealmKeycloakTest {
+
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    @Rule
+    public GreenMailRule greenMail = new GreenMailRule();
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected LoginTotpPage loginTotpPage;
+
+    private HmacOTP otp; // = new HmacOTP(policy.getDigits(), policy.getAlgorithm(), policy.getLookAheadWindow());
+
+    private int lifespan;
+
+    private static int counter = 0;
 
     public static OTPPolicy policy;
 
@@ -59,29 +74,12 @@ public class LoginHotpTest extends AbstractTestRealmKeycloakTest {
                    .otpEnabled();
     }
 
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule();
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected LoginTotpPage loginTotpPage;
-
-    private HmacOTP otp; // = new HmacOTP(policy.getDigits(), policy.getAlgorithm(), policy.getLookAheadWindow());
-
-    private int lifespan;
-
-    private static int counter = 0;
-
     @Before
-    public void before() throws MalformedURLException {
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+
         RealmRepresentation testRealm = testRealm().toRepresentation();
 
         policy = new OTPPolicy();

@@ -6,6 +6,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.authentication.authenticators.browser.OTPFormAuthenticator;
@@ -78,23 +79,27 @@ public class BrowserFlowTest extends AbstractTestRealmKeycloakTest {
     @Drone
     protected WebDriver driver;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernameOnlyPage;
 
-    @Page
     protected PasswordPage passwordPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
     @Page
     protected OneTimeCode oneTimeCodePage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        passwordPage = new PasswordPage(driver);
+        errorPage = new ErrorPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+    }
 
     @Rule
     public AssertEvents events = new AssertEvents(this);

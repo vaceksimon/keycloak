@@ -27,7 +27,6 @@ import java.util.Map;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -104,31 +103,35 @@ public class LevelOfAssuranceFlowTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginConfigTotpPage totpSetupPage;
 
-    @Page
     protected SetupRecoveryAuthnCodesPage setupRecoveryAuthnCodesPage;
 
-    @Page
     protected SelectAuthenticatorPage selectAuthenticatorPage;
 
     private TimeBasedOTP totp = new TimeBasedOTP();
 
-    @Page
     protected PushTheButtonPage pushTheButtonPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected DeleteCredentialPage deleteCredentialPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        totpSetupPage = new LoginConfigTotpPage(driver);
+        setupRecoveryAuthnCodesPage = new SetupRecoveryAuthnCodesPage(driver);
+        selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
+        pushTheButtonPage = new PushTheButtonPage(driver);
+        errorPage = new ErrorPage(driver);
+        deleteCredentialPage = new DeleteCredentialPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

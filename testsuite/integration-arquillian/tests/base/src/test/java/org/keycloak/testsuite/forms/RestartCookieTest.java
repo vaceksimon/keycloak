@@ -19,7 +19,7 @@ package org.keycloak.testsuite.forms;
 
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.common.util.MultivaluedHashMap;
@@ -48,10 +48,7 @@ import org.openqa.selenium.Cookie;
  */
 public class RestartCookieTest extends AbstractTestRealmKeycloakTest {
 
-
-    @Page
     protected LoginPage loginPage;
-
 
     @Rule
     public AssertEvents events = new AssertEvents(this);
@@ -75,6 +72,11 @@ public class RestartCookieTest extends AbstractTestRealmKeycloakTest {
             "    \"response_mode\": \"fragment\"\n" +
             "  }\n" +
             "}";
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

@@ -24,8 +24,8 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
@@ -59,9 +59,9 @@ import org.keycloak.testsuite.admin.ApiUtil;
 import org.keycloak.testsuite.arquillian.annotation.EnableFeature;
 import org.keycloak.testsuite.pages.AppPage;
 import org.keycloak.testsuite.pages.AppPage.RequestType;
+import org.keycloak.testsuite.pages.LoginPage;
 import org.keycloak.testsuite.pages.ErrorPage;
 import org.keycloak.testsuite.pages.LoginConfigTotpPage;
-import org.keycloak.testsuite.pages.LoginPage;
 import org.keycloak.testsuite.pages.LoginPasswordUpdatePage;
 import org.keycloak.testsuite.updaters.RealmAttributeUpdater;
 import org.keycloak.testsuite.util.AdminClientUtil;
@@ -96,6 +96,35 @@ import static org.keycloak.testsuite.util.ServerURLs.getAuthServerContextRoot;
  */
 public class LoginTest extends AbstractTestRealmKeycloakTest {
 
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    @Rule
+    public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected LoginConfigTotpPage configTotpPage;
+
+    private static String userId;
+
+    private static String user2Id;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        configTotpPage = new LoginConfigTotpPage(driver);
+    }
+
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
         UserRepresentation user = UserBuilder.create()
@@ -126,31 +155,6 @@ public class LoginTest extends AbstractTestRealmKeycloakTest {
                     .user(user2)
                     .user(admin);
     }
-
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected LoginConfigTotpPage configTotpPage;
-
-    @Rule
-    public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
-
-    private static String userId;
-
-    private static String user2Id;
 
     @Override
     public void importTestRealms() {

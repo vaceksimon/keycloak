@@ -34,7 +34,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,20 +73,24 @@ public class RegisterWithUserProfileTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected RegisterPage registerPage;
-
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected RegisterPage registerPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        registerPage = new RegisterPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

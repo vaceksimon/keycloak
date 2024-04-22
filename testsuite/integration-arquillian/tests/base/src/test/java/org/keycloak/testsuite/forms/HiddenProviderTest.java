@@ -16,8 +16,8 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -27,8 +27,12 @@ import org.keycloak.testsuite.util.IdentityProviderBuilder;
 
 public class HiddenProviderTest extends AbstractTestRealmKeycloakTest {
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
     
     @Override
     protected RealmResource testRealm() {

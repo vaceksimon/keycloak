@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,6 +69,7 @@ import org.keycloak.testsuite.util.BrowserTabUtil;
 import org.keycloak.testsuite.util.ClientBuilder;
 import org.keycloak.testsuite.util.GreenMailRule;
 import org.keycloak.testsuite.util.InfinispanTestTimeServiceRule;
+import org.keycloak.testsuite.util.InfinispanTestTimeServiceRule;
 import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.UserBuilder;
 import org.keycloak.testsuite.util.WaitUtils;
@@ -82,6 +82,37 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  */
 public class MultipleTabsLoginTest extends AbstractTestRealmKeycloakTest {
 
+    @Rule
+    public GreenMailRule greenMail = new GreenMailRule();
+
+    @Rule
+    public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
+
+    @Rule
+    public AssertEvents events = new AssertEvents(this);
+
+    protected AppPage appPage;
+
+    protected LoginPage loginPage;
+
+    protected ErrorPage errorPage;
+
+    protected InfoPage infoPage;
+
+    protected VerifyEmailPage verifyEmailPage;
+
+    protected LoginPasswordResetPage resetPasswordPage;
+
+    protected LoginPasswordUpdatePage updatePasswordPage;
+
+    protected LoginUpdateProfilePage updateProfilePage;
+
+    protected LoginExpiredPage loginExpiredPage;
+
+    protected RegisterPage registerPage;
+
+    protected OAuthGrantPage grantPage;
+
     private String userId;
 
     @Override
@@ -91,6 +122,21 @@ public class MultipleTabsLoginTest extends AbstractTestRealmKeycloakTest {
     @Override
     protected boolean modifyRealmForSSL() {
         return true;
+    }
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        infoPage = new InfoPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        resetPasswordPage = new LoginPasswordResetPage(driver);
+        updatePasswordPage = new LoginPasswordUpdatePage(driver);
+        updateProfilePage = new LoginUpdateProfilePage(driver);
+        loginExpiredPage = new LoginExpiredPage(driver);
+        registerPage = new RegisterPage(driver);
+        grantPage = new OAuthGrantPage(driver);
     }
 
     @Before
@@ -108,49 +154,6 @@ public class MultipleTabsLoginTest extends AbstractTestRealmKeycloakTest {
 
         oauth.clientId("test-app");
     }
-
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule();
-
-    @Rule
-    public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);
-
-    @Page
-    protected AppPage appPage;
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected ErrorPage errorPage;
-
-    @Page
-    protected InfoPage infoPage;
-
-    @Page
-    protected VerifyEmailPage verifyEmailPage;
-
-    @Page
-    protected LoginPasswordResetPage resetPasswordPage;
-
-    @Page
-    protected LoginPasswordUpdatePage updatePasswordPage;
-
-    @Page
-    protected LoginUpdateProfilePage updateProfilePage;
-
-    @Page
-    protected LoginExpiredPage loginExpiredPage;
-
-    @Page
-    protected RegisterPage registerPage;
-
-    @Page
-    protected OAuthGrantPage grantPage;
-
-    @Rule
-    public AssertEvents events = new AssertEvents(this);
-
 
     @Test
     public void multipleTabsParallelLoginTest() {

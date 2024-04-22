@@ -16,7 +16,6 @@
  */
 package org.keycloak.testsuite.forms;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,7 +54,6 @@ import static org.keycloak.common.Profile.Feature.AUTHORIZATION;
 @EnableFeature(value = Profile.Feature.SCRIPTS)
 public class ScriptAuthenticatorTest extends AbstractFlowTest {
 
-    @Page
     protected LoginPage loginPage;
 
     @Rule
@@ -66,6 +64,11 @@ public class ScriptAuthenticatorTest extends AbstractFlowTest {
     private static String failId;
 
     public static final String EXECUTION_ID = "scriptAuth";
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+    }
 
     @BeforeClass
     public static void enabled() {

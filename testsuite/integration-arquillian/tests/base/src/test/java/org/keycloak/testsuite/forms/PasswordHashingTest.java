@@ -17,8 +17,8 @@
 package org.keycloak.testsuite.forms;
 
 import jakarta.ws.rs.BadRequestException;
+import org.junit.Before;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -32,7 +32,6 @@ import org.keycloak.credential.hash.Pbkdf2PasswordHashProviderFactory;
 import org.keycloak.credential.hash.Pbkdf2Sha256PasswordHashProviderFactory;
 import org.keycloak.credential.hash.Pbkdf2Sha512PasswordHashProviderFactory;
 import org.keycloak.crypto.hash.Argon2Parameters;
-import org.keycloak.crypto.hash.Argon2PasswordHashProvider;
 import org.keycloak.crypto.hash.Argon2PasswordHashProviderFactory;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
@@ -72,15 +71,19 @@ import static org.junit.Assert.fail;
  */
 public class PasswordHashingTest extends AbstractTestRealmKeycloakTest {
 
+    protected LoginPage loginPage;
+
+    protected AppPage appPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+    }
+
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
     }
-
-    @Page
-    protected LoginPage loginPage;
-
-    @Page
-    protected AppPage appPage;
 
     @Test
     public void testSetInvalidProvider() {
