@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
@@ -74,17 +73,21 @@ public class OIDCAdapterClusterTest extends AbstractAdapterClusteredTest {
         return servletDeployment(SessionPortalDistributable.DEPLOYMENT_NAME, "keycloak.json", SessionServlet.class);
     }
 
-    @Page
     protected OIDCLogin loginPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
 
-    @Page
     protected SessionPortalDistributable sessionPortalPage;
+
+    @Before
+    public void before() {
+        loginPage = new OIDCLogin(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+        sessionPortalPage = new SessionPortalDistributable(driver);
+    }
 
     @Override
     public void setDefaultPageUriParameters() {

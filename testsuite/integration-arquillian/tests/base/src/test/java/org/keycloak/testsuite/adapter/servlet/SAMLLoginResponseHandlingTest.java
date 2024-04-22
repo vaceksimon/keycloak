@@ -5,6 +5,7 @@ import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.adapters.rotation.PublicKeyLocator;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.ProtocolMappersResource;
@@ -65,11 +66,15 @@ import static org.keycloak.testsuite.util.WaitUtils.waitUntilElement;
 @AppServerContainer(ContainerConstants.APP_SERVER_JETTY94)
 public class SAMLLoginResponseHandlingTest extends AbstractSAMLServletAdapterTest {
 
-    @Page
     protected Employee2Servlet employee2ServletPage;
 
-    @Page
     protected EmployeeSigServlet employeeSigServletPage;
+
+    @Before
+    public void before() {
+        employee2ServletPage = new Employee2Servlet(driver);
+        employeeSigServletPage = new EmployeeSigServlet(driver);
+    }
 
     @Deployment(name = Employee2Servlet.DEPLOYMENT_NAME)
     protected static WebArchive employee2() {

@@ -78,8 +78,12 @@ public abstract class AbstractAdapterClusteredTest extends AbstractServletsAdapt
     @ArquillianResource
     protected Deployer deployer;
 
-    @Page
     LoginActions loginActionsPage;
+
+    @Before
+    public void before() {
+        loginActionsPage = new LoginActions(driver);
+    }
 
     @BeforeClass
     public static void checkPropertiesSet() {

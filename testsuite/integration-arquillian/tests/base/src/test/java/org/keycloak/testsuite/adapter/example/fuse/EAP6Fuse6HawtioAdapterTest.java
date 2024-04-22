@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.After;
 import org.junit.Assume;
@@ -61,13 +60,17 @@ public class EAP6Fuse6HawtioAdapterTest extends AbstractExampleAdapterTest imple
     @JavascriptBrowser
     protected WebDriver jsDriver;
 
-    @Page
     @JavascriptBrowser
     private HawtioPage hawtioPage;
 
-    @Page
     @JavascriptBrowser
     private OIDCLogin testRealmLoginPageFuse;
+
+    @Before
+    public void before() {
+        hawtioPage = new HawtioPage(driver);
+        testRealmLoginPageFuse = new OIDCLogin(driver);
+    }
 
     @Override
     public void addAdapterTestRealms(List<RealmRepresentation> testRealms) {

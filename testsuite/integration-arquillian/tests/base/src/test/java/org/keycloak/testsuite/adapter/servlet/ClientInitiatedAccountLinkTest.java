@@ -58,6 +58,9 @@ import org.keycloak.testsuite.util.AdminClientUtil;
 import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.keycloak.util.JsonSerialization;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.UriBuilder;
@@ -93,18 +96,31 @@ public class ClientInitiatedAccountLinkTest extends AbstractServletsAdapterTest 
     private static final String USER_ATTRIBUTE = "hardcoded_attribute";
     private static final String USER_ATTRIBUTE_VALUE = "hardcoded_value";
 
-    @Page
     protected LoginUpdateProfilePage loginUpdateProfilePage;
 
-    @Page
     private LoginPage loginPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    private ClientApp appPage;
+
+    @Before
+    public void before() {
+        loginUpdateProfilePage = new LoginUpdateProfilePage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        appPage = new ClientApp(driver);
+    }
 
     public static class ClientApp extends AbstractPageWithInjectedUrl {
 
         public static final String DEPLOYMENT_NAME = "client-linking";
+
+        public ClientApp(WebDriver driver) {
+            this.driver = driver;
+            AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+            PageFactory.initElements(ajax, this);
+        }
 
         @ArquillianResource
         @OperateOnDeployment(DEPLOYMENT_NAME)
@@ -116,9 +132,6 @@ public class ClientInitiatedAccountLinkTest extends AbstractServletsAdapterTest 
         }
 
     }
-
-    @Page
-    private ClientApp appPage;
 
     @Override
     public void beforeAuthTest() {

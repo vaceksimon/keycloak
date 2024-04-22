@@ -17,6 +17,7 @@
 package org.keycloak.testsuite.adapter.servlet;
 
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.testsuite.adapter.AbstractServletsAdapterTest;
 import org.keycloak.testsuite.adapter.page.CustomerPortal;
 import org.keycloak.testsuite.adapter.spi.TestSessionIdMapper;
@@ -48,8 +49,12 @@ public class DemoFilterServletAdapterTestForCustomizedIdMapper extends AbstractS
     @JavascriptBrowser
     protected WebDriver jsDriver;
 
-    @Page
     protected CustomerPortal customerPortal;
+
+    @Before
+    public void before() {
+        customerPortal = new CustomerPortal(driver);
+    }
 
     @Deployment(name = CustomerPortal.DEPLOYMENT_NAME)
     protected static WebArchive customerPortal() {

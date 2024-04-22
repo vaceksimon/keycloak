@@ -188,8 +188,12 @@ public class SamlSignatureTest extends AbstractAdapterTest {
         }
     }
 
-    @Page
     private SalesPostAssertionAndResponseSig salesPostAssertionAndResponseSigPage;
+
+    @Before
+    public void before() {
+        salesPostAssertionAndResponseSigPage = new SalesPostAssertionAndResponseSig(driver);
+    }
 
     private UserRepresentation user;
 

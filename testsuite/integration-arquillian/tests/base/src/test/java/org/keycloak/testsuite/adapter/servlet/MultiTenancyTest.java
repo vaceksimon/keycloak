@@ -25,6 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.protocol.oidc.OIDCLoginProtocolService;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.testsuite.adapter.AbstractServletsAdapterTest;
@@ -48,8 +49,12 @@ import static org.keycloak.testsuite.utils.io.IOUtil.loadRealm;
 @AppServerContainer(ContainerConstants.APP_SERVER_EAP71)
 public class MultiTenancyTest extends AbstractServletsAdapterTest {
     
-    @Page
     private MultiTenant tenantPage;
+
+    @Before
+    public void before() {
+        tenantPage = new MultiTenant(driver);
+    }
     
     @Override
     public void addAdapterTestRealms(List<RealmRepresentation> testRealms) {

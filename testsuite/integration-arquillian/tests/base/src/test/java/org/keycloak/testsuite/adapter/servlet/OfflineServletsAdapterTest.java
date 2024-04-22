@@ -12,6 +12,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.representations.RefreshToken;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -64,6 +65,13 @@ public class OfflineServletsAdapterTest extends AbstractServletsAdapterTest {
     protected LoginPage loginPage;
     @Page
     protected OAuthGrantPage oauthGrantPage;
+
+    @Before
+    public void before() {
+        offlineTokenPage = new OfflineToken(driver);
+        loginPage = new LoginPage(driver);
+        oauthGrantPage = new OAuthGrantPage(driver);
+    }
 
     @Rule
     public InfinispanTestTimeServiceRule ispnTestTimeService = new InfinispanTestTimeServiceRule(this);

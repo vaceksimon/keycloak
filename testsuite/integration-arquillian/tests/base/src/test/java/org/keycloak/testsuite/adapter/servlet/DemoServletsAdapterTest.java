@@ -146,21 +146,18 @@ import static org.keycloak.testsuite.util.WaitUtils.waitForPageToLoad;
 @AppServerContainer(ContainerConstants.APP_SERVER_TOMCAT9)
 public class DemoServletsAdapterTest extends AbstractServletsAdapterTest {
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
 
-    @Page
     protected CustomerPortal customerPortal;
-    @Page
+
     private CustomerPortalNoConf customerPortalNoConf;
-    @Page
+
     private SecurePortal securePortal;
-    @Page
+
     private SecurePortalWithCustomSessionConfig securePortalWithCustomSessionConfig;
-    @Page
+
     private SecurePortalRewriteRedirectUri securePortalRewriteRedirectUri;
     @Page
     private CustomerDb customerDb;
@@ -197,6 +194,32 @@ public class DemoServletsAdapterTest extends AbstractServletsAdapterTest {
 
     @Rule
     public AssertEvents assertEvents = new AssertEvents(this);
+
+    @Before
+    public void before() {
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+        customerPortal = new CustomerPortal(driver);
+        securePortal = new SecurePortal(driver);
+        customerPortalNoConf = new CustomerPortalNoConf(driver);
+        securePortalRewriteRedirectUri = new SecurePortalRewriteRedirectUri(driver);
+        customerDb = new CustomerDb(driver);
+        customerDbErrorPage = new CustomerDbErrorPage(driver);
+        productPortal = new ProductPortal(driver);
+        productPortalAutodetectBearerOnly = new ProductPortalAutodetectBearerOnly(driver);
+        inputPortal = new InputPortal(driver);
+        inputPortalNoAccessToken = new InputPortalNoAccessToken(driver);
+        tokenMinTTLPage = new TokenMinTTLPage(driver);
+        tokenRefreshPage = new TokenRefreshPage(driver);
+        oAuthGrantPage = new OAuthGrant(driver);
+        loginEventsPage = new LoginEvents(driver);
+        basicAuthPage = new BasicAuth(driver);
+        configPage = new Config(driver);
+        clientSecretJwtSecurePortal = new ClientSecretJwtSecurePortal(driver);
+        clientSecretJwtSecurePortalValidAlg = new ClientSecretJwtSecurePortalValidAlg(driver);
+        customerCookiePortal = new CustomerCookiePortal(driver);
+        customerCookiePortalRoot = new CustomerCookiePortalRoot(driver);
+    }
 
     @Deployment(name = CustomerPortal.DEPLOYMENT_NAME)
     protected static WebArchive customerPortal() {

@@ -19,9 +19,9 @@ package org.keycloak.testsuite.adapter.undertow.servlet;
 import java.util.List;
 import java.util.Map;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -56,10 +56,15 @@ import static org.keycloak.testsuite.util.URLAssert.assertCurrentUrlStartsWithLo
 @Ignore(value = "Need to resolve default relative scenario when running on non-undertow")
 public class UndertowRelaviteUriAdapterTest extends AbstractServletsAdapterTest {
     
-    @Page
     private CustomerPortal customerPortal;
-    @Page
+
     private ProductPortal productPortal;
+
+    @Before
+    public void before() {
+        customerPortal = new CustomerPortal(driver);
+        productPortal = new ProductPortal(driver);
+    }
     
     @Override
     public void addAdapterTestRealms(List<RealmRepresentation> testRealms) {

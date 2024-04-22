@@ -61,11 +61,15 @@ public class SecuredDeploymentsAdapterTest extends AbstractServletsAdapterTest i
     @ArquillianResource
     private ContainerController controller;
 
-    @Page
     private CustomerPortalSubsystem customerPortalSubsystem;
 
-    @Page
     private ProductPortalSubsystem productPortalSubsystem;
+
+    @Before
+    public void before() {
+        customerPortalSubsystem = new CustomerPortalSubsystem(driver);
+        productPortalSubsystem = new ProductPortalSubsystem(driver);
+    }
 
     @Deployment(name = CustomerPortalSubsystem.DEPLOYMENT_NAME)
     protected static WebArchive customerPortalSubsystem() {

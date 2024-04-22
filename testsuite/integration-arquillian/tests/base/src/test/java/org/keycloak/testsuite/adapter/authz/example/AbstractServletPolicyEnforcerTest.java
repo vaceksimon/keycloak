@@ -29,8 +29,8 @@ import java.net.URL;
 import java.util.List;
 
 import org.jboss.arquillian.container.test.api.Deployer;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.AuthorizationResource;
@@ -60,11 +60,15 @@ public class AbstractServletPolicyEnforcerTest extends AbstractExampleAdapterTes
     @ArquillianResource
     private Deployer deployer;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
+
+    @Before
+    public void before() {
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+    }
 
     @BeforeClass
     public static void enabled() {

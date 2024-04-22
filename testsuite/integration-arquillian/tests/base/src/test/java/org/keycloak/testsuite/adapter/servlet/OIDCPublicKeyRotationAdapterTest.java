@@ -94,6 +94,13 @@ public class OIDCPublicKeyRotationAdapterTest extends AbstractServletsAdapterTes
     @Page
     private CustomerDb customerDb;
 
+    @Before
+    public void before() {
+        securePortal = new SecurePortal(driver);
+        tokenMinTTLPage = new TokenMinTTLPage(driver);
+        customerDb = new CustomerDb(driver);
+    }
+
     @Deployment(name = SecurePortal.DEPLOYMENT_NAME)
     protected static WebArchive securePortal() {
         return servletDeployment(SecurePortal.DEPLOYMENT_NAME, AdapterActionsFilter.class, CallAuthenticatedServlet.class);

@@ -25,6 +25,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.adapters.rotation.PublicKeyLocator;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.testsuite.adapter.filter.AdapterActionsFilter;
@@ -53,9 +54,14 @@ import static org.keycloak.testsuite.util.SamlClient.Binding.POST;
 @AppServerContainer(ContainerConstants.APP_SERVER_JETTY94)
 public class SAMLClockSkewAdapterTest extends AbstractSAMLServletAdapterTest {
 
-    @Page protected SalesPostClockSkewServlet salesPostClockSkewServletPage;
+    protected SalesPostClockSkewServlet salesPostClockSkewServletPage;
     private static final String DEPLOYMENT_NAME_3_SEC = SalesPostClockSkewServlet.DEPLOYMENT_NAME + "_3Sec";
     private static final String DEPLOYMENT_NAME_30_SEC = SalesPostClockSkewServlet.DEPLOYMENT_NAME + "_30Sec";
+
+    @Before
+    public void before() {
+        salesPostClockSkewServletPage = new SalesPostClockSkewServlet(driver);
+    }
 
     @ArquillianResource private Deployer deployer;
 

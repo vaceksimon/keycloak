@@ -70,17 +70,21 @@ import static org.keycloak.testsuite.util.WaitUtils.waitForPageToLoad;
 @AppServerContainer(ContainerConstants.APP_SERVER_EAP71)
 public class UserStorageConsentTest extends AbstractServletsAdapterTest {
 
-    @Page
     private ProductPortal productPortal;
 
-    @Page
     protected ConsentPage consentPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
+
+    @Before
+    public void before() {
+        productPortal = new ProductPortal(driver);
+        consentPage = new ConsentPage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+    }
 
     @Deployment(name = ProductPortal.DEPLOYMENT_NAME)
     protected static WebArchive productPortal() {

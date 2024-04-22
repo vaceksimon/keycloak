@@ -19,7 +19,6 @@ package org.keycloak.testsuite.adapter.servlet;
 import com.google.common.collect.ImmutableMap;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
@@ -89,6 +88,10 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -125,18 +128,31 @@ public class BrokerLinkAndTokenExchangeTest extends AbstractServletsAdapterTest 
         return servletDeployment(ClientApp.DEPLOYMENT_NAME, LinkAndExchangeServlet.class, ServletTestUtils.class);
     }
 
-    @Page
     protected LoginUpdateProfilePage loginUpdateProfilePage;
 
-    @Page
     private LoginPage loginPage;
 
-    @Page
     protected ErrorPage errorPage;
+
+    private ClientApp appPage;
+
+    @Before
+    public void before() {
+        loginUpdateProfilePage = new LoginUpdateProfilePage(driver);
+        loginPage = new LoginPage(driver);
+        errorPage = new ErrorPage(driver);
+        appPage = new ClientApp(driver);
+    }
 
     public static class ClientApp extends AbstractPageWithInjectedUrl {
 
         public static final String DEPLOYMENT_NAME = "exchange-linking";
+
+        public ClientApp(WebDriver driver) {
+            this.driver = driver;
+            AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+            PageFactory.initElements(ajax, this);
+        }
 
         @ArquillianResource
         @OperateOnDeployment(DEPLOYMENT_NAME)
@@ -148,9 +164,6 @@ public class BrokerLinkAndTokenExchangeTest extends AbstractServletsAdapterTest 
         }
 
     }
-
-    @Page
-    private ClientApp appPage;
 
     @Rule
     public AssertEvents events = new AssertEvents(this);

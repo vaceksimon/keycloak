@@ -106,6 +106,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.keycloak.admin.client.Keycloak;
@@ -201,127 +202,132 @@ import org.xml.sax.SAXException;
 @AppServerContainer(ContainerConstants.APP_SERVER_TOMCAT8)
 @AppServerContainer(ContainerConstants.APP_SERVER_TOMCAT9)
 public class SAMLServletAdapterTest extends AbstractSAMLServletAdapterTest {
-    @Page
+
     protected BadClientSalesPostSigServlet badClientSalesPostSigServletPage;
 
-    @Page
     protected BadRealmSalesPostSigServlet badRealmSalesPostSigServletPage;
 
-    @Page
     protected EmployeeAcsServlet employeeAcsServletPage;
 
-    @Page
     protected Employee2Servlet employee2ServletPage;
 
-    @Page
     protected EmployeeDomServlet employeeDomServletPage;
 
-    @Page
     protected EmployeeSigServlet employeeSigServletPage;
 
-    @Page
     protected EmployeeSigPostNoIdpKeyServlet employeeSigPostNoIdpKeyServletPage;
 
-    @Page
     protected EmployeeSigRedirNoIdpKeyServlet employeeSigRedirNoIdpKeyServletPage;
 
-    @Page
     protected EmployeeSigRedirOptNoIdpKeyServlet employeeSigRedirOptNoIdpKeyServletPage;
 
-    @Page
     protected EmployeeSigFrontServlet employeeSigFrontServletPage;
 
-    @Page
     protected EmployeeRoleMappingServlet employeeRoleMappingPage;
 
-    @Page
     protected SalesMetadataServlet salesMetadataServletPage;
 
-    @Page
     protected SalesPostServlet salesPostServletPage;
 
-    @Page
     private SalesPost2Servlet salesPost2ServletPage;
 
-    @Page
     protected SalesPostEncServlet salesPostEncServletPage;
 
-    @Page
     protected SalesPostEncSignAssertionsOnlyServlet salesPostEncSignAssertionsOnlyServletPage;
 
-    @Page
     protected SalesPostPassiveServlet salesPostPassiveServletPage;
 
-    @Page
     protected SalesPostSigServlet salesPostSigServletPage;
 
-    @Page
     protected SalesPostSigEmailServlet salesPostSigEmailServletPage;
 
-    @Page
     protected SalesPostSigPersistentServlet salesPostSigPersistentServletPage;
 
-    @Page
     protected SalesPostSigTransientServlet salesPostSigTransientServletPage;
 
-    @Page
     protected SAMLIDPInitiatedLogin samlidpInitiatedLogin;
 
     protected boolean forbiddenIfNotAuthenticated = true;
 
-    @Page
     protected SalesPostAssertionAndResponseSig salesPostAssertionAndResponseSigPage;
 
-    @Page
     protected BadAssertionSalesPostSig badAssertionSalesPostSigPage;
 
-    @Page
     protected MissingAssertionSig missingAssertionSigPage;
 
-    @Page
     protected EmployeeServlet employeeServletPage;
 
-    @Page
     protected DifferentCookieNameServlet differentCookieNameServletPage;
 
-    @Page
     private InputPortal inputPortalPage;
 
-    @Page
     private SAMLIDPInitiatedLogin samlidpInitiatedLoginPage;
 
-    @Page
     protected SalesPostAutodetectServlet salesPostAutodetectServletPage;
 
-    @Page
     protected AdapterLogoutPage adapterLogoutPage;
 
-    @Page
     protected EcpSP ecpSPPage;
 
-    @Page
     protected MultiTenant1Saml multiTenant1SamlPage;
 
-    @Page
     protected MultiTenant2Saml multiTenant2SamlPage;
 
-    @Page
     protected SAMLPostLoginTenant1 tenant1RealmSAMLPostLoginPage;
 
-    @Page
     protected SAMLPostLoginTenant2 tenant2RealmSAMLPostLoginPage;
 
-    @Page
     protected OneTimeCode authenticate;
 
-    @Page
     private InfoPage infoPage;
 
-    @Page
     private ErrorPage errorPage;
 
     public static final String FORBIDDEN_TEXT = "HTTP status code: 403";
     public static final String WEBSPHERE_FORBIDDEN_TEXT = "Error reported: 403";
+
+    @Before
+    public void before() {
+        badClientSalesPostSigServletPage = new BadClientSalesPostSigServlet(driver);
+        badRealmSalesPostSigServletPage = new BadRealmSalesPostSigServlet(driver);
+        employeeAcsServletPage = new EmployeeAcsServlet(driver);
+        employee2ServletPage = new Employee2Servlet(driver);
+        employeeDomServletPage = new EmployeeDomServlet(driver);
+        employeeSigServletPage = new EmployeeSigServlet(driver);
+        employeeSigPostNoIdpKeyServletPage = new EmployeeSigPostNoIdpKeyServlet(driver);
+        employeeSigRedirNoIdpKeyServletPage = new EmployeeSigRedirNoIdpKeyServlet(driver);
+        employeeSigRedirOptNoIdpKeyServletPage = new EmployeeSigRedirOptNoIdpKeyServlet(driver);
+        employeeSigFrontServletPage = new EmployeeSigFrontServlet(driver);
+        employeeRoleMappingPage = new EmployeeRoleMappingServlet(driver);
+        salesMetadataServletPage = new SalesMetadataServlet(driver);
+        salesPostServletPage = new SalesPostServlet(driver);
+        salesPost2ServletPage = new SalesPost2Servlet(driver);
+        salesPostEncServletPage = new SalesPostEncServlet(driver);
+        salesPostEncSignAssertionsOnlyServletPage = new SalesPostEncSignAssertionsOnlyServlet(driver);
+        salesPostPassiveServletPage = new SalesPostPassiveServlet(driver);
+        salesPostSigServletPage = new SalesPostSigServlet(driver);
+        salesPostSigEmailServletPage = new SalesPostSigEmailServlet(driver);
+        salesPostSigPersistentServletPage = new SalesPostSigPersistentServlet(driver);
+        salesPostSigTransientServletPage = new SalesPostSigTransientServlet(driver);
+        samlidpInitiatedLogin = new SAMLIDPInitiatedLogin(driver);
+        salesPostAssertionAndResponseSigPage = new SalesPostAssertionAndResponseSig(driver);
+        badAssertionSalesPostSigPage = new BadAssertionSalesPostSig(driver);
+        missingAssertionSigPage = new MissingAssertionSig(driver);
+        employeeServletPage = new EmployeeServlet(driver);
+        differentCookieNameServletPage = new DifferentCookieNameServlet(driver);
+        inputPortalPage = new InputPortal(driver);
+        samlidpInitiatedLoginPage = new SAMLIDPInitiatedLogin(driver);
+        salesPostAutodetectServletPage = new SalesPostAutodetectServlet(driver);
+        adapterLogoutPage = new AdapterLogoutPage(driver);
+        ecpSPPage = new EcpSP(driver);
+        multiTenant1SamlPage = new MultiTenant1Saml(driver);
+        multiTenant2SamlPage = new MultiTenant2Saml(driver);
+        tenant1RealmSAMLPostLoginPage = new SAMLPostLoginTenant1(driver);
+        tenant2RealmSAMLPostLoginPage = new SAMLPostLoginTenant2(driver);
+        authenticate = new OneTimeCode(driver);
+        infoPage = new InfoPage(driver);
+        errorPage = new ErrorPage(driver);
+    }
 
     @Deployment(name = BadClientSalesPostSigServlet.DEPLOYMENT_NAME)
     protected static WebArchive badClientSalesPostSig() {
