@@ -20,6 +20,9 @@ package org.keycloak.testsuite.adapter.page;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,6 +42,12 @@ public class AdapterLogoutPage extends AbstractPageWithInjectedUrl {
       + "</web-app>";
 
     private static final String LOGOUT_PAGE_HTML = "<html><body>Logged out</body></html>";
+
+    public AdapterLogoutPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public static final WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, AdapterLogoutPage.DEPLOYMENT_NAME + ".war")

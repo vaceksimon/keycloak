@@ -16,11 +16,13 @@
  */
 package org.keycloak.testsuite.auth.page;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 
@@ -30,7 +32,6 @@ import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
  */
 public class PasswordFields extends FieldsBase {
 
-    @Page
     private PasswordErrors inputErrors;
 
     @FindBy(id = "password")
@@ -47,6 +48,16 @@ public class PasswordFields extends FieldsBase {
     private WebElement confirmPasswordInput;
     @FindBy(xpath = "//label[@for='password-confirm']")
     private WebElement confirmPasswordLabel;
+
+    public PasswordFields() {
+
+    }
+
+    public PasswordFields(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void setPassword(String password) {
         UIUtils.setTextInputValue(passwordInput, password);
@@ -109,6 +120,11 @@ public class PasswordFields extends FieldsBase {
 
         @FindBy(id = "input-error-password-confirm")
         private WebElement passwordConfirmError;
+
+        public PasswordErrors(WebDriver driver) {
+            AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+            PageFactory.initElements(ajax, this);
+        }
 
 
         public String getPasswordError() {

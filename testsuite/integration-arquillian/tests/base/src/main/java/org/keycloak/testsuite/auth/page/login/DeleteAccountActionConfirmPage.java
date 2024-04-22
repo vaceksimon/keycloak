@@ -2,8 +2,11 @@ package org.keycloak.testsuite.auth.page.login;
 
 import org.keycloak.authentication.requiredactions.DeleteAccount;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.clickLink;
 
@@ -14,6 +17,13 @@ public class DeleteAccountActionConfirmPage extends RequiredActions {
 
   @FindBy(css = "input[type='submit']")
   WebElement confirmActionButton;
+
+  public DeleteAccountActionConfirmPage(WebDriver driver) {
+      this.driver = driver;
+      AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+      PageFactory.initElements(ajax, this);
+  }
+
 
   @Override
   public String getActionId() {

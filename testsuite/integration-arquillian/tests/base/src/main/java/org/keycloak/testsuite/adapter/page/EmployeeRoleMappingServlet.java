@@ -25,6 +25,9 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.auth.page.login.SAMLPostLogin;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * A {@code Page} for the {@code EmployeeRoleMapping} application.
@@ -41,6 +44,12 @@ public class EmployeeRoleMappingServlet extends SAMLServlet {
 
     private SAMLPostLogin loginPage;
     private UserRepresentation user;
+
+    public EmployeeRoleMappingServlet(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public URL getInjectedUrl() {

@@ -1,11 +1,14 @@
 package org.keycloak.testsuite.adapter.page;
 
 import org.keycloak.testsuite.page.AbstractPage;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import jakarta.ws.rs.core.UriBuilder;
 import org.keycloak.testsuite.util.JavascriptBrowser;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.WaitUtils.waitUntilElement;
 
@@ -19,6 +22,12 @@ public class Hawtio2Page extends AbstractPage {
             return "https://localhost:" + System.getProperty("app.server.https.port", "8543") + "/hawtio";
         }
         return "http://localhost:" + System.getProperty("app.server.http.port", "8180") + "/hawtio";
+    }
+
+    public Hawtio2Page(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     @Override

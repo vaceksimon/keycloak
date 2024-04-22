@@ -21,6 +21,9 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 
@@ -46,6 +49,12 @@ public class InputPortal extends SAMLServlet {
 
     @FindBy(name = "submit")
     private WebElement submit;
+
+    public InputPortal(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void execute(String param) {
         parameter.clear();

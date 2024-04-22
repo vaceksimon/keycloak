@@ -22,6 +22,8 @@ import org.keycloak.testsuite.util.DroneUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +44,12 @@ public class OAuthGrant extends RequiredActions {
 
     @FindBy(xpath = "//div[@id='kc-oauth']/ul/li/span")
     private List<WebElement> scopesToApprove;
+
+    public OAuthGrant(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public String getActionId() {

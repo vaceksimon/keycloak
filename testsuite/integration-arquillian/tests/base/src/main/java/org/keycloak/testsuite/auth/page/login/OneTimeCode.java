@@ -21,6 +21,9 @@ import org.keycloak.testsuite.util.URLUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 
@@ -42,6 +45,12 @@ public class OneTimeCode extends Authenticate {
 
     public String getOtpLabel() {
         return getTextFromElement(otpInputLabel);
+    }
+
+    public OneTimeCode(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     public boolean isOtpLabelPresent() {

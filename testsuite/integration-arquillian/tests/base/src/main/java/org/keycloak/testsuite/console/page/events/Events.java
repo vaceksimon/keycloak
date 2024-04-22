@@ -18,6 +18,7 @@
 package org.keycloak.testsuite.console.page.events;
 
 import org.keycloak.testsuite.console.page.AdminConsoleRealm;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -26,6 +27,10 @@ import org.openqa.selenium.support.FindBy;
  * @author tkyjovsk
  */
 public class Events extends AdminConsoleRealm {
+
+    public Events(WebDriver driver) {
+        super(driver);
+    }
 
     @Override
     public String getUriFragment() {

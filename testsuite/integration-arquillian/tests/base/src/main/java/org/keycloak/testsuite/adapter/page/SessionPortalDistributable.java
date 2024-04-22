@@ -22,6 +22,9 @@ import java.net.URL;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Igor</a>
@@ -33,6 +36,12 @@ public class SessionPortalDistributable extends AbstractPageWithInjectedUrl {
     @ArquillianResource
     @OperateOnDeployment(DEPLOYMENT_NAME)
     private URL url;
+
+    public SessionPortalDistributable(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public URL getInjectedUrl() {

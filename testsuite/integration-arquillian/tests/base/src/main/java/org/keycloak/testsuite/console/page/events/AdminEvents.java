@@ -21,6 +21,7 @@ import org.keycloak.testsuite.console.page.fragment.DataTable;
 import org.keycloak.testsuite.page.Form;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -29,6 +30,10 @@ import org.openqa.selenium.support.FindBy;
  * @author mhajas
  */
 public class AdminEvents extends Events {
+
+    public AdminEvents(WebDriver driver) {
+        super(driver);
+    }
 
     @Override
     public String getUriFragment() {

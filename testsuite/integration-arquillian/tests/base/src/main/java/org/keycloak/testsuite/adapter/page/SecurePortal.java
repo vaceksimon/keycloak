@@ -20,6 +20,9 @@ package org.keycloak.testsuite.adapter.page;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 
@@ -30,6 +33,12 @@ import java.net.URL;
 public class SecurePortal extends AbstractPageWithInjectedUrl {
 
     public static final String DEPLOYMENT_NAME = "secure-portal";
+
+    public SecurePortal(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @ArquillianResource
     @OperateOnDeployment(DEPLOYMENT_NAME)

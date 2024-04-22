@@ -20,6 +20,9 @@ package org.keycloak.testsuite.auth.page;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 import static org.keycloak.testsuite.util.UIUtils.setTextInputValue;
@@ -44,6 +47,16 @@ public class WelcomePage extends AuthServer {
 
     @FindBy(css = ".welcome-header h1")
     private WebElement welcomeMessage;
+
+    public WelcomePage() {
+
+    }
+
+    public WelcomePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public boolean isPasswordSet() {
         return !(driver.getPageSource().contains("Please create an initial admin user to get started.") ||

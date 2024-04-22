@@ -20,6 +20,7 @@ package org.keycloak.testsuite.console.page;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -36,7 +37,8 @@ public class AdminConsoleRealm extends AdminConsoleRealmsRoot {
 
     public static final String CONSOLE_REALM = "consoleRealm";
 
-    public AdminConsoleRealm() {
+    public AdminConsoleRealm(WebDriver driver) {
+        super(driver);
         setUriParameter(CONSOLE_REALM, TEST);
     }
 

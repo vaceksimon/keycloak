@@ -20,6 +20,9 @@ package org.keycloak.testsuite.adapter.page;
 import java.net.MalformedURLException;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 import static org.keycloak.testsuite.util.WaitUtils.pause;
@@ -41,6 +44,12 @@ public class MultiTenant2Saml extends SAMLServlet {
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public MultiTenant2Saml(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
     
     @Override

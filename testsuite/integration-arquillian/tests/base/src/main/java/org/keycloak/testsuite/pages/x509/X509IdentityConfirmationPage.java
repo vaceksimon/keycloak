@@ -23,6 +23,9 @@ import org.keycloak.testsuite.pages.LanguageComboboxAwarePage;
 import org.keycloak.testsuite.util.OAuthClient;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  * @author <a href="mailto:brat000012001@gmail.com">Peter Nalyvayko</a>
@@ -61,6 +64,14 @@ public class X509IdentityConfirmationPage extends LanguageComboboxAwarePage {
 
     @FindBy(id = "certificate_subjectDN")
     private WebElement certificateSubjectDistinguishedName;
+
+    public X509IdentityConfirmationPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     public void confirm() {
         confirmButton.click();

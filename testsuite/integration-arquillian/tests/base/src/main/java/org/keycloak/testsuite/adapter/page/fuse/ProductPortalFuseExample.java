@@ -17,8 +17,11 @@
 
 package org.keycloak.testsuite.adapter.page.fuse;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  *
@@ -47,6 +50,12 @@ public class ProductPortalFuseExample extends AbstractFuseExample {
     protected WebElement product1Secured;
     @FindBy(xpath = "//p[contains(text(),'Product with ID 2 - secured request')]")
     protected WebElement product2Secured;
+
+    public ProductPortalFuseExample(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public String getProduct1UnsecuredText() {
         return product1Unsecured.getText();

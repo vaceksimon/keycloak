@@ -17,12 +17,14 @@
 
 package org.keycloak.testsuite.auth.page;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 
@@ -32,7 +34,6 @@ import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
  */
 public class AccountFields extends FieldsBase {
 
-    @Page
     private AccountErrors inputErrors;
 
     @FindBy(id = "username")
@@ -54,6 +55,16 @@ public class AccountFields extends FieldsBase {
     private WebElement lastNameInput;
     @FindBy(xpath = "//label[@for='lastName']")
     private WebElement lastNameLabel;
+
+    public AccountFields() {
+
+    }
+
+    public AccountFields(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void setUsername(String username) {
         UIUtils.setTextInputValue(usernameInput, username);
@@ -164,6 +175,11 @@ public class AccountFields extends FieldsBase {
 
         @FindBy(id = "input-error-terms-accepted")
         private WebElement termsError;
+
+        public AccountErrors(WebDriver driver) {
+            AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+            PageFactory.initElements(ajax, this);
+        }
 
         public String getFirstNameError() {
             try {

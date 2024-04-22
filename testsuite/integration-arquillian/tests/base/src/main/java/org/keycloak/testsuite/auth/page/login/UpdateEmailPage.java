@@ -21,9 +21,13 @@ import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 
 import org.keycloak.models.UserModel;
 import org.keycloak.testsuite.pages.LogoutSessionsPage;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 public class UpdateEmailPage extends LogoutSessionsPage {
 
@@ -41,6 +45,14 @@ public class UpdateEmailPage extends LogoutSessionsPage {
 
     @FindBy(css = "input[type='submit']")
     private WebElement submitButton;
+
+    public UpdateEmailPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     @Override
     public boolean isCurrent() {

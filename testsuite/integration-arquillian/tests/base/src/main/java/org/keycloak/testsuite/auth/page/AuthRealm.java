@@ -21,6 +21,10 @@ import org.keycloak.protocol.oidc.OIDCLoginProtocolService;
 import org.keycloak.testsuite.auth.page.login.PageWithLoginUrl;
 
 import jakarta.ws.rs.core.UriBuilder;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+
 import java.net.URI;
 
 /**
@@ -45,6 +49,14 @@ public class AuthRealm extends AuthServer implements PageWithLoginUrl {
 
     public AuthRealm() {
         setUriParameter(AUTH_REALM, MASTER);
+    }
+
+    public AuthRealm(WebDriver driver) {
+        setUriParameter(AUTH_REALM, MASTER);
+
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     @Override

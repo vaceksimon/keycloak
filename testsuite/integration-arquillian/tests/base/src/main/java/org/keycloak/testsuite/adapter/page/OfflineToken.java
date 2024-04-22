@@ -3,6 +3,9 @@ package org.keycloak.testsuite.adapter.page;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 
@@ -19,6 +22,12 @@ public class OfflineToken extends AbstractShowTokensPage {
     @ArquillianResource
     @OperateOnDeployment(DEPLOYMENT_NAME)
     private URL url;
+
+    public OfflineToken(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public URL getInjectedUrl() {

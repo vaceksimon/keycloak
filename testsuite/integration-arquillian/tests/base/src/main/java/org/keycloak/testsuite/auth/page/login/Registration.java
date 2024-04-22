@@ -16,7 +16,7 @@
  */
 package org.keycloak.testsuite.auth.page.login;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.auth.page.AccountFields;
 import org.keycloak.testsuite.auth.page.PasswordFields;
@@ -40,14 +40,18 @@ public class Registration extends LoginActions {
                 .path("registration");
     }
 
-    @Page
     private AccountFields accountFields;
 
-    @Page
     private PasswordFields passwordFields;
 
     @FindBy(xpath = "//a[contains(., 'Back to Login')]")
     private WebElement backToLoginLink;
+
+    @Before
+    public void before() {
+        accountFields = new AccountFields(driver);
+        passwordFields = new PasswordFields(driver);
+    }
 
     public void register(UserRepresentation user) {
         setValues(user);

@@ -17,6 +17,9 @@
 package org.keycloak.testsuite.console.page;
 
 import jakarta.ws.rs.core.UriBuilder;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 public class ForbiddenPage extends AdminConsole {
 
@@ -28,5 +31,11 @@ public class ForbiddenPage extends AdminConsole {
     @Override
     public String getUriFragment() {
         return "/forbidden";
+    }
+
+    public ForbiddenPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 }

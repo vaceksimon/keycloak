@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import jakarta.ws.rs.core.UriBuilder;
 import org.keycloak.testsuite.util.JavascriptBrowser;
@@ -44,6 +46,12 @@ public class HawtioPage extends AbstractPage {
     @FindBy(xpath = "//input[@type='submit' and @value='Yes']")
     @JavascriptBrowser
     private WebElement modal;
+
+    public HawtioPage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void logout(WebDriver jsDriver) {
         log.debug("logging out");

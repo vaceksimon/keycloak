@@ -20,6 +20,9 @@ package org.keycloak.testsuite.console.page;
 import org.keycloak.testsuite.console.page.fragment.RealmSelector;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 import jakarta.ws.rs.core.UriBuilder;
 import java.util.List;
@@ -41,6 +44,12 @@ public class AdminConsoleRealmsRoot extends AdminConsole {
     @Override
     public String getUriFragment() {
         return "/realms";
+    }
+
+    public AdminConsoleRealmsRoot(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     public void clickRealm(String realm) {

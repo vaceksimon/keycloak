@@ -17,6 +17,10 @@
 
 package org.keycloak.testsuite.adapter.page.fuse;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+
 /**
  *
  * @author tkyjovsk
@@ -26,6 +30,12 @@ public class AdminInterface extends CustomerPortalFuseExample {
     @Override
     public String getContext() {
         return super.getContext() + "/customers/camel.jsp";
+    }
+
+    public AdminInterface(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
 }

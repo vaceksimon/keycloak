@@ -19,6 +19,9 @@ package org.keycloak.testsuite.adapter.page.fuse;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  *
@@ -37,6 +40,12 @@ public class CustomerListing extends CustomerPortalFuseExample {
     protected WebElement logOutLink;
     @FindBy(linkText = "manage acct")
     protected WebElement accountManagementLink;
+
+    public CustomerListing(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void clickProducts() {
         productsLink.click();

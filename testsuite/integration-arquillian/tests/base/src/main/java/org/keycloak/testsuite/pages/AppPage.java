@@ -35,6 +35,10 @@ public class AppPage extends AbstractPage {
     @FindBy(id = "account")
     private WebElement accountLink;
 
+    public AppPage() {
+
+    }
+
     public AppPage(WebDriver driver) {
         this.driver = driver;
         AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);

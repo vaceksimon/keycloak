@@ -90,6 +90,9 @@ public class RegisterPage extends AbstractPage {
         PageFactory.initElements(ajax, this);
         oauth = new OAuthClient();
         oauth.init(driver);
+
+        accountErrors = new AccountFields.AccountErrors(driver);
+        passwordErrors = new PasswordFields.PasswordErrors(driver);
     }
 
     public void register(String firstName, String lastName, String email, String username, String password, String passwordConfirm) {

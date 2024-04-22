@@ -23,6 +23,9 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
 import org.keycloak.testsuite.util.URLUtils;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 public class CustomerCookiePortalRoot extends AbstractPageWithInjectedUrl {
 
@@ -43,6 +46,12 @@ public class CustomerCookiePortalRoot extends AbstractPageWithInjectedUrl {
 
     public void navigateTo(String relative) {
         URLUtils.navigateToUri(getInjectedUrl() + relative);
+    }
+
+    public CustomerCookiePortalRoot(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     @Override

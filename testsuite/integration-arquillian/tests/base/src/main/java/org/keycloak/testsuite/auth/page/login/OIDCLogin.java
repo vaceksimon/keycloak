@@ -18,6 +18,9 @@
 package org.keycloak.testsuite.auth.page.login;
 
 import org.keycloak.testsuite.util.DroneUtils;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  *
@@ -26,7 +29,15 @@ import org.keycloak.testsuite.util.DroneUtils;
 public class OIDCLogin extends Login {
 
     public OIDCLogin() {
+
+    }
+
+    public OIDCLogin(WebDriver driver) {
         setProtocol(OIDC);
+
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     @Override

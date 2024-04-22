@@ -20,6 +20,9 @@ package org.keycloak.testsuite.auth.page.login;
 import org.jboss.arquillian.graphene.page.Page;
 import org.keycloak.models.UserModel;
 import org.keycloak.testsuite.auth.page.PasswordFields;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  *
@@ -33,6 +36,16 @@ public class UpdatePassword extends RequiredActions {
     @Override
     public String getActionId() {
         return UserModel.RequiredAction.UPDATE_PASSWORD.name();
+    }
+
+    public UpdatePassword() {
+
+    }
+
+    public UpdatePassword(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 
     public void updatePasswords(String newPassword, String confirmPassword) {

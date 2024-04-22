@@ -23,6 +23,8 @@ import org.keycloak.testsuite.pages.PageUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import static org.keycloak.testsuite.util.UIUtils.getTextFromElement;
 
@@ -45,6 +47,12 @@ public class LoginPasswordUpdatePage {
 
     @FindBy(className = "alert-error")
     private WebElement loginErrorMessage;
+
+    public LoginPasswordUpdatePage(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void changePassword(String newPassword, String passwordConfirm) {
         newPasswordInput.sendKeys(newPassword);

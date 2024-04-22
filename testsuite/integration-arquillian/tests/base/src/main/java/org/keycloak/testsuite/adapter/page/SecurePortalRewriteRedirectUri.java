@@ -22,6 +22,9 @@ import java.net.URL;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 /**
  *
@@ -34,6 +37,12 @@ public class SecurePortalRewriteRedirectUri extends AbstractPageWithInjectedUrl 
     @ArquillianResource
     @OperateOnDeployment(DEPLOYMENT_NAME)
     private URL url;
+
+    public SecurePortalRewriteRedirectUri(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     @Override
     public URL getInjectedUrl() {

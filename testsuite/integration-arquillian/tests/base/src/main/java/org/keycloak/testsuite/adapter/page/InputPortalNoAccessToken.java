@@ -22,6 +22,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 
@@ -47,6 +50,12 @@ public class InputPortalNoAccessToken extends AbstractPageWithInjectedUrl {
 
     @FindBy(name = "submit")
     private WebElement submit;
+
+    public InputPortalNoAccessToken(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void execute(String param) {
         parameter.clear();

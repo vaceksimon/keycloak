@@ -17,6 +17,10 @@
 
 package org.keycloak.testsuite.auth.page.login;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+
 /**
  * @author rmartinc
  */
@@ -24,5 +28,14 @@ public class SAMLPostLoginTenant2 extends Login {
     SAMLPostLoginTenant2() {
         setProtocol(LOGIN_ACTION);
         setAuthRealm("tenant2");
+    }
+
+    public SAMLPostLoginTenant2(WebDriver driver) {
+        setProtocol(LOGIN_ACTION);
+        setAuthRealm("tenant2");
+
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
     }
 }

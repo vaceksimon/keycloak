@@ -24,6 +24,9 @@ import org.keycloak.testsuite.page.AbstractPageWithInjectedUrl;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.net.URL;
 
@@ -69,6 +72,12 @@ public class AngularCorsProductTestApp extends AbstractPageWithInjectedUrl {
     private WebElement outputArea;
     @FindBy(id = "headers")
     private WebElement headers;
+
+    public AngularCorsProductTestApp(WebDriver driver) {
+        this.driver = driver;
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void reloadData() {
         WaitUtils.waitUntilElement(reloadDataButton).is().clickable();

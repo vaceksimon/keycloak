@@ -21,6 +21,7 @@ import org.keycloak.testsuite.console.page.fragment.OnOffSwitch;
 import org.keycloak.testsuite.page.Form;
 import org.keycloak.testsuite.util.UIUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -32,6 +33,10 @@ import static org.keycloak.testsuite.util.WaitUtils.waitUntilElement;
  * @author mhajas
  */
 public class Config extends Events {
+
+    public Config(WebDriver driver) {
+        super(driver);
+    }
 
     @Override
     public String getUriFragment() {
