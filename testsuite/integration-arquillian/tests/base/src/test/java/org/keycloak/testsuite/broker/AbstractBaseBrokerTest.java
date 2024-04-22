@@ -18,7 +18,6 @@
 package org.keycloak.testsuite.broker;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -80,52 +79,36 @@ public abstract class AbstractBaseBrokerTest extends AbstractKeycloakTest {
 
     protected static final String ATTRIBUTE_VALUE = "attribute.value";
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected UpdateAccountInformationPage updateAccountInformationPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected IdpConfirmLinkPage idpConfirmLinkPage;
 
-    @Page
     protected IdpConfirmOverrideLinkPage idpConfirmOverrideLinkPage;
 
-    @Page
     protected ProceedPage proceedPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
 
-    @Page
     protected IdpLinkEmailPage idpLinkEmailPage;
 
-    @Page
     protected LoginExpiredPage loginExpiredPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginConfigTotpPage totpPage;
 
-    @Page
     protected LoginPasswordResetPage loginPasswordResetPage;
 
-    @Page
     protected VerifyEmailPage verifyEmailPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected AppPage appPage;
 
     protected TimeBasedOTP totp = new TimeBasedOTP();
@@ -184,6 +167,24 @@ public abstract class AbstractBaseBrokerTest extends AbstractKeycloakTest {
 
     @Before
     public void beforeBrokerTest() {
+        loginPage = new LoginPage(driver);
+        updateAccountInformationPage = new UpdateAccountInformationPage(driver);
+        errorPage = new ErrorPage(driver);
+        idpConfirmLinkPage = new IdpConfirmLinkPage(driver);
+        idpConfirmOverrideLinkPage = new IdpConfirmOverrideLinkPage(driver);
+        proceedPage = new ProceedPage(driver);
+        proceedPage = new ProceedPage(driver);
+        logoutConfirmPage = new LogoutConfirmPage(driver);
+        infoPage = new InfoPage(driver);
+        idpLinkEmailPage = new IdpLinkEmailPage(driver);
+        loginExpiredPage = new LoginExpiredPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        totpPage = new LoginConfigTotpPage(driver);
+        loginPasswordResetPage = new LoginPasswordResetPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+        appPage = new AppPage(driver);
+
         RealmRepresentation consumerRealm = bc.createConsumerRealm();
         RealmRepresentation providerRealm = bc.createProviderRealm();
         importRealm(consumerRealm);

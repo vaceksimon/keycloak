@@ -18,7 +18,6 @@ package org.keycloak.testsuite.broker;
 
 import java.util.Collections;
 import jakarta.ws.rs.core.Response;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,14 +67,15 @@ public class AccountLinkTest extends AbstractKeycloakTest {
     public static final String PARENT_IDP = "parent-idp";
     public static final String PARENT_USERNAME = "parent";
 
-    @Page
-    protected UpdateAccountInformationPage profilePage;
-
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected AppPage appPage;
+
+    @Before
+    public void before() {
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

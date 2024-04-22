@@ -45,7 +45,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import jakarta.ws.rs.core.Response;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -78,15 +77,19 @@ public class KcSamlIdPInitiatedSsoTest extends AbstractKeycloakTest {
 
     private static final String CONSUMER_CHOSEN_USERNAME = "mytest";
 
-    @Page
     protected LoginPage accountLoginPage;
 
-    @Page
     protected UpdateAccountInformationPage updateAccountInformationPage;
 
     private String urlRealmConsumer2;
     private String urlRealmConsumer;
     private String urlRealmProvider;
+
+    @Before
+    public void before() {
+        accountLoginPage = new LoginPage(driver);
+        updateAccountInformationPage = new UpdateAccountInformationPage(driver);
+    }
 
     protected String getAuthRoot() {
         return suiteContext.getAuthServerInfo().getContextRoot().toString();

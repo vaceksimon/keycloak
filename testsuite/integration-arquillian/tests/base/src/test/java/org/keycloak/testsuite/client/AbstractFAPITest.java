@@ -41,6 +41,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.resource.UserResource;
@@ -67,17 +68,20 @@ public abstract class AbstractFAPITest extends AbstractClientPoliciesTest {
     protected final String TEST_USERNAME = "john";
     protected final String TEST_USERSECRET = "password";
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected AppPage appPage;
+
+    @Before
+    public void before() {
+        super.before();
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     @BeforeClass
     public static void verifySSL() {

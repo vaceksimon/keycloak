@@ -44,7 +44,7 @@ public class InitialAccessTokenTest extends AbstractClientRegistrationTest {
     private ClientInitialAccessResource resource;
 
     @Before
-    public void before() throws Exception {
+    public void before() throws ClientRegistrationException {
         super.before();
 
         resource = adminClient.realm(REALM_NAME).clientInitialAccess();

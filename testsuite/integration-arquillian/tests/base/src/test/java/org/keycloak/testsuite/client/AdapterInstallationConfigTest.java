@@ -41,7 +41,7 @@ public class AdapterInstallationConfigTest extends AbstractClientRegistrationTes
 
     @Before
     @Override
-    public void before() throws Exception {
+    public void before() throws ClientRegistrationException {
         super.before();
 
         client = new ClientRepresentation();

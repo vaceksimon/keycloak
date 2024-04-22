@@ -47,9 +47,8 @@ import java.util.Optional;
 import jakarta.ws.rs.BadRequestException;
 
 import org.apache.http.HttpResponse;
-import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.OAuthErrorException;
@@ -129,17 +128,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 @EnableFeature(value = Profile.Feature.CLIENT_SECRET_ROTATION)
 public class ClientPoliciesExecutorTest extends AbstractClientPoliciesTest {
 
-    @Page
-    protected OAuth2DeviceVerificationPage verificationPage;
-
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
+
+    @Before
+    public void before() {
+        super.before();
+        verificationPage = new OAuth2DeviceVerificationPage(driver);
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.client.registration.Auth;
+import org.keycloak.client.registration.ClientRegistrationException;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.connections.infinispan.InfinispanConnectionProvider;
 import org.keycloak.constants.ServiceUrlConstants;
@@ -74,7 +75,7 @@ public class OIDCJwksClientRegistrationTest extends AbstractClientRegistrationTe
     }
 
     @Before
-    public void before() throws Exception {
+    public void before() throws ClientRegistrationException {
         super.before();
 
         ClientInitialAccessPresentation token = adminClient.realm(REALM_NAME).clientInitialAccess().create(new ClientInitialAccessCreatePresentation(0, 10));

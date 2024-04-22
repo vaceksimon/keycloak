@@ -107,14 +107,18 @@ public class SocialLoginTest extends AbstractKeycloakTest {
 
     private static final Properties config = new Properties();
 
-    @Page
     private LoginPage loginPage;
 
-    @Page
     private AppPage appPage;
 
     @Page
     private UpdateAccount updateAccountPage;
+
+    @Before
+    public void before() {
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     public enum Provider {
         GOOGLE("google", GoogleLoginPage.class),

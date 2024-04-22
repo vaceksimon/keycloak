@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.OAuthErrorException;
@@ -70,7 +70,6 @@ import org.keycloak.services.clientpolicy.executor.SecureSessionEnforceExecutorF
 import org.keycloak.testsuite.arquillian.annotation.EnableFeature;
 import org.keycloak.testsuite.pages.ErrorPage;
 import org.keycloak.testsuite.pages.LogoutConfirmPage;
-import org.keycloak.testsuite.pages.OAuth2DeviceVerificationPage;
 import org.keycloak.testsuite.pages.OAuthGrantPage;
 import org.keycloak.testsuite.services.clientpolicy.executor.TestRaiseExceptionExecutorFactory;
 import org.keycloak.testsuite.util.ClientBuilder;
@@ -89,17 +88,16 @@ import org.keycloak.testsuite.util.UserBuilder;
 @EnableFeature(value = Profile.Feature.CLIENT_SECRET_ROTATION)
 public class ClientPoliciesConditionTest extends AbstractClientPoliciesTest {
 
-    @Page
-    protected OAuth2DeviceVerificationPage verificationPage;
-
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
+
+    @Before
+    public void before() {
+        super.before();
+    }
 
     @Override
     public void addTestRealms(List<RealmRepresentation> testRealms) {

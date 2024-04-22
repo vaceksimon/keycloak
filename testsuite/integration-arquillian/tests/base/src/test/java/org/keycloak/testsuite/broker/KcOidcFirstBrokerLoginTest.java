@@ -3,6 +3,7 @@ package org.keycloak.testsuite.broker;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Test;
+import org.junit.Before;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
@@ -33,14 +34,19 @@ import static org.keycloak.testsuite.forms.VerifyProfileTest.PERMISSIONS_ALL;
  */
 public class KcOidcFirstBrokerLoginTest extends AbstractFirstBrokerLoginTest {
 
-    @Page
     protected LoginUpdateProfilePage loginUpdateProfilePage;
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected RegisterPage registerPage;
+
+    @Before
+    public void beforeBrokerTest() {
+        super.beforeBrokerTest();
+        loginUpdateProfilePage = new LoginUpdateProfilePage(driver);
+        appPage = new AppPage(driver);
+        registerPage = new RegisterPage(driver);
+    }
 
     @Override
     protected BrokerConfiguration getBrokerConfiguration() {

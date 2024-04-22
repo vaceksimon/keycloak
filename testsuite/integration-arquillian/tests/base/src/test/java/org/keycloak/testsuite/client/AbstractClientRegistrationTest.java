@@ -44,7 +44,7 @@ public abstract class AbstractClientRegistrationTest extends AbstractKeycloakTes
     ClientRegistration reg;
 
     @Before
-    public void before() throws Exception {
+    public void before() throws ClientRegistrationException {
         reg = ClientRegistration.create().url(suiteContext.getAuthServerInfo().getContextRoot() + "/auth", "test").build();
     }
 

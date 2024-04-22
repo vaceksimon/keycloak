@@ -63,7 +63,7 @@ import static org.junit.Assert.assertTrue;
 public class OIDCPairwiseClientRegistrationTest extends AbstractClientRegistrationTest {
 
     @Before
-    public void before() throws Exception {
+    public void before() throws ClientRegistrationException {
         super.before();
 
         ClientInitialAccessPresentation token = adminClient.realm(REALM_NAME).clientInitialAccess().create(new ClientInitialAccessCreatePresentation(0, 10));

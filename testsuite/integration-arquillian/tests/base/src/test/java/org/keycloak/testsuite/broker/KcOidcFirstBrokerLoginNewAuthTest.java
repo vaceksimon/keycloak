@@ -28,11 +28,16 @@ import static org.keycloak.testsuite.broker.BrokerTestTools.waitForPage;
  */
 public class KcOidcFirstBrokerLoginNewAuthTest extends AbstractInitializedBaseBrokerTest {
 
-    @Page
     PasswordPage passwordPage;
 
-    @Page
     protected SelectAuthenticatorPage selectAuthenticatorPage;
+
+    @Before
+    public void beforeBrokerTest() {
+        super.beforeBrokerTest();
+        passwordPage = new PasswordPage(driver);
+        selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
+    }
 
     @Override
     protected BrokerConfiguration getBrokerConfiguration() {
