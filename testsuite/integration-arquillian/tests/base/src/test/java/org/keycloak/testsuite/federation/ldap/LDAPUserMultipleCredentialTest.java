@@ -1,11 +1,11 @@
 package org.keycloak.testsuite.federation.ldap;
 
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.authentication.authenticators.browser.OTPFormAuthenticatorFactory;
@@ -39,17 +39,23 @@ import java.util.Arrays;
 @EnableVault
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LDAPUserMultipleCredentialTest extends AbstractLDAPTest {
-    @Page
+
     protected LoginUsernameOnlyPage loginUsernameOnlyPage;
 
-    @Page
     protected PasswordPage passwordPage;
     
-    @Page
     protected SelectAuthenticatorPage selectAuthenticatorPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
+
+    @Before
+    public void before(){
+        super.before();
+        loginUsernameOnlyPage = new LoginUsernameOnlyPage(driver);
+        passwordPage = new PasswordPage(driver);
+        selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+    }
 
     @Rule
     // Start an embedded LDAP server with configuration derived from test annotations before each test

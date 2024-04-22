@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 
-import org.jboss.arquillian.graphene.page.Page;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,17 +62,12 @@ import static org.keycloak.testsuite.federation.storage.UserStorageTest.addCompo
  */
 public class UserStorageOTPTest extends AbstractTestRealmKeycloakTest {
 
-
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginConfigTotpPage loginConfigTotpPage;
 
-    @Page
     protected AppPage appPage;
 
     @Rule
@@ -87,6 +80,14 @@ public class UserStorageOTPTest extends AbstractTestRealmKeycloakTest {
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
 
+    }
+
+    @Before
+    public void before(){
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        loginConfigTotpPage = new LoginConfigTotpPage(driver);
+        appPage = new AppPage(driver);
     }
 
     @Before

@@ -20,11 +20,9 @@ package org.keycloak.testsuite.federation.storage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
@@ -71,20 +69,23 @@ public class BackwardsCompatibilityUserStorageTest extends AbstractTestRealmKeyc
 
     private String backwardsCompProviderId;
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected LoginTotpPage loginTotpPage;
 
-    @Page
     protected LoginConfigTotpPage configureTotpRequiredActionPage;
 
-
     private TimeBasedOTP totp = new TimeBasedOTP();
+
+    @Before
+    public void before(){
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        loginTotpPage = new LoginTotpPage(driver);
+        configureTotpRequiredActionPage = new LoginConfigTotpPage(driver);
+    }
 
     @Before
     public void addProvidersBeforeTest() throws URISyntaxException, IOException {

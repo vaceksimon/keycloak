@@ -18,10 +18,11 @@
 
 package org.keycloak.testsuite.federation.ldap;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.Assume;
 import org.junit.rules.ExternalResource;
 import org.junit.runners.MethodSorters;
 import org.keycloak.events.Errors;
@@ -49,7 +50,6 @@ import java.util.Map;
 import java.util.List;
 
 import java.util.Objects;
-import org.junit.Assume;
 import org.keycloak.testsuite.util.OAuthClient;
 
 /**
@@ -141,11 +141,14 @@ public class LDAPUserLoginTest extends AbstractLDAPTest {
         }
     }
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
+
+    @Before
+    public void before(){
+        super.before();
+    }
 
     // Helper methods
     private void verifyLoginSucceededAndLogout(String username, String password) {

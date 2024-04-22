@@ -17,10 +17,10 @@
 package org.keycloak.testsuite.federation.storage;
 
 import org.jboss.arquillian.container.test.api.ContainerController;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -48,16 +48,19 @@ public class BrokenUserStorageTest extends AbstractTestRealmKeycloakTest {
     @ArquillianResource
     protected ContainerController controller;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected AppPage appPage;
+
+    @Before
+    public void before(){
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
     }
-
 
     private void loginSuccessAndLogout(String username, String password) {
         loginPage.open();

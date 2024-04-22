@@ -19,7 +19,7 @@ package org.keycloak.testsuite.federation.ldap;
 
 import java.util.Map;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.junit.Before;
 import org.junit.Rule;
 import org.keycloak.representations.idm.ComponentRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -43,22 +43,23 @@ public abstract class AbstractLDAPTest extends AbstractTestRealmKeycloakTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected RegisterPage registerPage;
 
-    @Page
     protected OAuthGrantPage grantPage;
 
-    @Page
     protected LoginPasswordUpdatePage requiredActionChangePasswordPage;
 
-
+    @Before
+    public void before(){
+        appPage = new AppPage(driver);
+        loginPage = new LoginPage(driver);
+        registerPage = new RegisterPage(driver);
+        grantPage = new OAuthGrantPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

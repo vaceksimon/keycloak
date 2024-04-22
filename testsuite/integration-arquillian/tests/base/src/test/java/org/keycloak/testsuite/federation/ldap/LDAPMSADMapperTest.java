@@ -20,12 +20,12 @@ package org.keycloak.testsuite.federation.ldap;
 import java.util.Collections;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.component.ComponentModel;
@@ -93,9 +93,13 @@ public class LDAPMSADMapperTest extends AbstractLDAPTest {
     }
 
 
-    @Page
     protected LoginPasswordUpdatePage passwordUpdatePage;
 
+    @Before
+    public void before(){
+        super.before();
+        passwordUpdatePage = new LoginPasswordUpdatePage(driver);
+    }
 
     // TODO: This is skipped as it requires that MSAD server is set to not allow weak passwords (There needs to be pwdProperties=1 set on MSAD side).
     // TODO: Currently we can't rely on it. See KEYCLOAK-4276

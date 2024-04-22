@@ -24,8 +24,8 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.ietf.jgss.GSSCredential;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.common.constants.KerberosConstants;
@@ -57,8 +57,12 @@ import static org.keycloak.testsuite.admin.ApiUtil.findClientByClientId;
  */
 public abstract class AbstractKerberosSingleRealmTest extends AbstractKerberosTest {
 
-    @Page
     protected AppPage appPage;
+
+    @Before
+    public void before(){
+        super.before();
+    }
 
     @Test
     public void spnegoNotAvailableTest() throws Exception {

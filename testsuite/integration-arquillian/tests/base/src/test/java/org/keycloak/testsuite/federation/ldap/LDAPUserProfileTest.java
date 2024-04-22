@@ -22,11 +22,11 @@ package org.keycloak.testsuite.federation.ldap;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.component.ComponentModel;
@@ -61,12 +61,17 @@ public class LDAPUserProfileTest extends AbstractLDAPTest {
     @ClassRule
     public static LDAPRule ldapRule = new LDAPRule();
 
-    @Page
     protected LoginUpdateProfilePage updateProfilePage;
 
     @Override
     protected LDAPRule getLDAPRule() {
         return ldapRule;
+    }
+
+    @Before
+    public void before(){
+        super.before();
+        updateProfilePage = new LoginUpdateProfilePage(driver);
     }
 
     @Override

@@ -26,10 +26,10 @@ import java.net.URI;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,11 +76,16 @@ public class KerberosStandaloneTest extends AbstractKerberosSingleRealmTest {
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected LoginPasswordUpdatePage loginPasswordUpdatePage;
 
-    @Page
     protected InfoPage infoPage;
+
+    @Before
+    public void before(){
+        super.before();
+        loginPasswordUpdatePage = new LoginPasswordUpdatePage(driver);
+        infoPage = new InfoPage(driver);
+    }
 
     @Override
     protected KerberosRule getKerberosRule() {

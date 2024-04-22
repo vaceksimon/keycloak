@@ -17,7 +17,6 @@
 package org.keycloak.testsuite.federation.storage;
 
 import org.jboss.arquillian.container.test.api.ContainerController;
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.Before;
@@ -75,10 +74,8 @@ public class UserStorageFailureTest extends AbstractTestRealmKeycloakTest {
     @ArquillianResource
     protected ContainerController controller;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected AppPage appPage;
 
     @Rule
@@ -88,6 +85,11 @@ public class UserStorageFailureTest extends AbstractTestRealmKeycloakTest {
     public void configureTestRealm(RealmRepresentation testRealm) {
     }
 
+    @Before
+    public void before(){
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+    }
 
     @Before
     public void addProvidersBeforeTest() {

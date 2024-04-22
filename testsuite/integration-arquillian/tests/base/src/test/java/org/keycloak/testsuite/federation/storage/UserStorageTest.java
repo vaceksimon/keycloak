@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -115,19 +114,23 @@ public class UserStorageTest extends AbstractAuthTest {
     @Rule
     public GreenMailRule greenMail = new GreenMailRule();
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected RegisterPage registerPage;
 
-    @Page
     protected VerifyEmailPage verifyEmailPage;
 
     private static final File CONFIG_DIR = new File(System.getProperty("auth.server.config.dir", ""));
+
+    @Before
+    public void before(){
+        loginPage = new LoginPage(driver);
+        appPage = new AppPage(driver);
+        registerPage = new RegisterPage(driver);
+        verifyEmailPage = new VerifyEmailPage(driver);
+    }
 
     @Before
     public void addProvidersBeforeTest() throws URISyntaxException, IOException {
