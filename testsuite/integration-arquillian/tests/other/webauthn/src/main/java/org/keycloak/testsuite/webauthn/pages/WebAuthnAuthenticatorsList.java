@@ -18,8 +18,11 @@
 package org.keycloak.testsuite.webauthn.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +42,11 @@ public class WebAuthnAuthenticatorsList {
 
     @FindBy(id = "kc-webauthn-authenticator")
     private List<WebElement> authenticators;
+
+    public WebAuthnAuthenticatorsList(WebDriver driver) {
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public List<WebAuthnAuthenticatorItem> getItems() {
         try {

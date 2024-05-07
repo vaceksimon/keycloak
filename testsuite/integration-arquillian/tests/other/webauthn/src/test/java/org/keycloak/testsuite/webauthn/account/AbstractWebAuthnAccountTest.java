@@ -17,7 +17,6 @@
 
 package org.keycloak.testsuite.webauthn.account;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.keycloak.authentication.authenticators.browser.UsernamePasswordFormFactory;
@@ -44,6 +43,7 @@ import org.keycloak.testsuite.webauthn.authenticators.UseVirtualAuthenticators;
 import org.keycloak.testsuite.webauthn.authenticators.VirtualAuthenticatorManager;
 import org.keycloak.testsuite.webauthn.pages.WebAuthnLoginPage;
 import org.keycloak.testsuite.webauthn.pages.WebAuthnRegisterPage;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.virtualauthenticator.VirtualAuthenticatorOptions;
 
 import jakarta.ws.rs.ClientErrorException;
@@ -57,13 +57,10 @@ import static org.keycloak.testsuite.util.WaitUtils.waitForPageToLoad;
 
 public abstract class AbstractWebAuthnAccountTest extends AbstractAuthTest implements UseVirtualAuthenticators {
 
-    @Page
     protected SigningInPage signingInPage;
 
-    @Page
     protected WebAuthnRegisterPage webAuthnRegisterPage;
 
-    @Page
     protected WebAuthnLoginPage webAuthnLoginPage;
 
     @Page
@@ -75,6 +72,22 @@ public abstract class AbstractWebAuthnAccountTest extends AbstractAuthTest imple
 
     protected static final String WEBAUTHN_FLOW_ID = "75e2390e-f296-49e6-acf8-6d21071d7e10";
     protected static final String DEFAULT_FLOW = "browser";
+
+    public AbstractWebAuthnAccountTest() {
+
+    }
+
+    public AbstractWebAuthnAccountTest(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    @Before
+    public void before() {
+        this.signingInPage = new SigningInPage(driver);
+        this.webAuthnRegisterPage = new WebAuthnRegisterPage(driver);
+        this.webAuthnLoginPage = new WebAuthnLoginPage(driver);
+
+    }
 
     @Override
     @Before

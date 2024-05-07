@@ -17,8 +17,8 @@
 package org.keycloak.testsuite.webauthn;
 
 import org.hamcrest.Matchers;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.WebAuthnConstants;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -39,14 +39,22 @@ import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.admin.AbstractAdminTest;
 import org.keycloak.testsuite.admin.ApiUtil;
+import org.keycloak.testsuite.pages.AppPage;
 import org.keycloak.testsuite.pages.AppPage.RequestType;
 import org.keycloak.testsuite.pages.ErrorPage;
+import org.keycloak.testsuite.pages.InfoPage;
+import org.keycloak.testsuite.pages.LoginPage;
 import org.keycloak.testsuite.pages.LoginUsernameOnlyPage;
+import org.keycloak.testsuite.pages.LogoutConfirmPage;
 import org.keycloak.testsuite.pages.PasswordPage;
+import org.keycloak.testsuite.pages.RegisterPage;
 import org.keycloak.testsuite.pages.SelectAuthenticatorPage;
 import org.keycloak.testsuite.updaters.RealmAttributeUpdater;
 import org.keycloak.testsuite.util.FlowUtil;
 import org.keycloak.testsuite.webauthn.pages.WebAuthnAuthenticatorsList;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnErrorPage;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnLoginPage;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnRegisterPage;
 import org.keycloak.testsuite.webauthn.updaters.WebAuthnRealmAttributeUpdater;
 import org.keycloak.util.JsonSerialization;
 
@@ -66,21 +74,34 @@ import static org.keycloak.models.AuthenticationExecutionModel.Requirement.REQUI
 
 public class WebAuthnRegisterAndLoginTest extends AbstractWebAuthnVirtualTest {
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernamePage;
 
-    @Page
     protected PasswordPage passwordPage;
 
-    @Page
     protected SelectAuthenticatorPage selectAuthenticatorPage;
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {
 
+    }
+
+    @Before
+    public void before() {
+        this.loginPage = new LoginPage(driver);
+        this.registerPage = new RegisterPage(driver);
+        this.webAuthnRegisterPage = new WebAuthnRegisterPage(driver);
+        this.webAuthnErrorPage = new WebAuthnErrorPage(driver);
+        this.webAuthnLoginPage = new WebAuthnLoginPage(driver);
+        this.appPage = new AppPage(driver);
+        this.logoutConfirmPage = new LogoutConfirmPage(driver);
+        this.infoPage = new InfoPage(driver);
+
+        this.errorPage = new ErrorPage(driver);
+        this.loginUsernamePage = new LoginUsernameOnlyPage(driver);
+        this.passwordPage = new PasswordPage(driver);
+        this.selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
     }
 
     @Override

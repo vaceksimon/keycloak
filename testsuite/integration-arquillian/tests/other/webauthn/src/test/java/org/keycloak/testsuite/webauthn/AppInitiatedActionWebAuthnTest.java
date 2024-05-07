@@ -17,7 +17,6 @@
 package org.keycloak.testsuite.webauthn;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.page.Page;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,18 +73,28 @@ public class AppInitiatedActionWebAuthnTest extends AbstractAppInitiatedActionTe
     protected final String DEFAULT_USERNAME = "test-user@localhost";
     protected final String DEFAULT_PASSWORD = "password";
 
-    @Page
     LoginUsernameOnlyPage usernamePage;
 
-    @Page
     PasswordPage passwordPage;
 
-    @Page
     WebAuthnRegisterPage webAuthnRegisterPage;
 
     @Drone
     @SecondBrowser
     private WebDriver driver2;
+
+    public AppInitiatedActionWebAuthnTest() {
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
+
+    @Before
+    public void before() {
+        super.before();
+        usernamePage = new LoginUsernameOnlyPage(driver);
+        passwordPage = new PasswordPage(driver);
+        webAuthnRegisterPage = new WebAuthnRegisterPage(driver);
+    }
 
     @Before
     @Override

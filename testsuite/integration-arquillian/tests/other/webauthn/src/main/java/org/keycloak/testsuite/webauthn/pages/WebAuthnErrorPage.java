@@ -6,8 +6,11 @@ import org.keycloak.testsuite.util.UIUtils;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,12 @@ public class WebAuthnErrorPage extends LanguageComboboxAwarePage {
 
     @FindBy(className = "alert-error")
     private WebElement errorMessage;
+
+    public WebAuthnErrorPage(WebDriver driver) {
+        super(driver);
+        AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(this.driver, 10);
+        PageFactory.initElements(ajax, this);
+    }
 
     public void clickTryAgain() {
         WaitUtils.waitUntilElement(tryAgainButton).is().clickable();

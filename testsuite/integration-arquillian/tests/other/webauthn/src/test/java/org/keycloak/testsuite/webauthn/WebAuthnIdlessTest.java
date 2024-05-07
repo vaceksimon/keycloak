@@ -16,8 +16,8 @@
  */
 package org.keycloak.testsuite.webauthn;
 
-import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.logging.Logger;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.keycloak.WebAuthnConstants;
@@ -41,8 +41,10 @@ import org.keycloak.testsuite.arquillian.annotation.IgnoreBrowserDriver;
 import org.keycloak.testsuite.pages.*;
 import org.keycloak.testsuite.pages.AppPage.RequestType;
 import org.keycloak.testsuite.util.FlowUtil;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnErrorPage;
 import org.keycloak.testsuite.webauthn.pages.WebAuthnLoginPage;
 import org.keycloak.testsuite.webauthn.pages.WebAuthnRegisterPage;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.IOException;
@@ -67,31 +69,40 @@ public class WebAuthnIdlessTest extends AbstractWebAuthnVirtualTest {
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected ErrorPage errorPage;
 
-    @Page
     protected WebAuthnLoginPage webAuthnLoginPage;
 
-    @Page
     protected WebAuthnRegisterPage webAuthnRegisterPage;
 
-    @Page
     protected LoginUsernameOnlyPage loginUsernamePage;
 
-    @Page
     protected SelectAuthenticatorPage selectAuthenticatorPage;
 
     private static final Logger logger = Logger.getLogger(WebAuthnIdlessTest.class);
 
     protected final static String username = "test-user@localhost";
     protected final static String password = "password";
+
+    @Before
+    public void before() {
+        this.loginPage = new LoginPage(driver);
+        this.registerPage = new RegisterPage(driver);
+        this.webAuthnRegisterPage = new WebAuthnRegisterPage(driver);
+        this.webAuthnErrorPage = new WebAuthnErrorPage(driver);
+        this.webAuthnLoginPage = new WebAuthnLoginPage(driver);
+        this.appPage = new AppPage(driver);
+        this.logoutConfirmPage = new LogoutConfirmPage(driver);
+        this.infoPage = new InfoPage(driver);
+
+        this.errorPage = new ErrorPage(driver);
+        this.loginUsernamePage = new LoginUsernameOnlyPage(driver);
+        this.selectAuthenticatorPage = new SelectAuthenticatorPage(driver);
+    }
 
     @Override
     public void configureTestRealm(RealmRepresentation testRealm) {

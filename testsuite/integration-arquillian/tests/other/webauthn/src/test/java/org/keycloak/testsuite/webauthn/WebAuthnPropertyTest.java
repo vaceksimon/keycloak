@@ -17,13 +17,22 @@
 
 package org.keycloak.testsuite.webauthn;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.keycloak.WebAuthnConstants;
 import org.keycloak.models.credential.WebAuthnCredentialModel;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.arquillian.annotation.IgnoreBrowserDriver;
+import org.keycloak.testsuite.pages.AppPage;
+import org.keycloak.testsuite.pages.InfoPage;
+import org.keycloak.testsuite.pages.LoginPage;
+import org.keycloak.testsuite.pages.LogoutConfirmPage;
+import org.keycloak.testsuite.pages.RegisterPage;
 import org.keycloak.testsuite.util.WaitUtils;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnErrorPage;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnLoginPage;
+import org.keycloak.testsuite.webauthn.pages.WebAuthnRegisterPage;
 import org.keycloak.testsuite.webauthn.utils.WebAuthnRealmData;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -44,6 +53,18 @@ import static org.keycloak.testsuite.webauthn.utils.PropertyRequirement.YES;
  * @author <a href="mailto:mabartos@redhat.com">Martin Bartos</a>
  */
 public class WebAuthnPropertyTest extends AbstractWebAuthnVirtualTest {
+
+    @Before
+    public void before() {
+        this.loginPage = new LoginPage(driver);
+        this.registerPage = new RegisterPage(driver);
+        this.webAuthnRegisterPage = new WebAuthnRegisterPage(driver);
+        this.webAuthnErrorPage = new WebAuthnErrorPage(driver);
+        this.webAuthnLoginPage = new WebAuthnLoginPage(driver);
+        this.appPage = new AppPage(driver);
+        this.logoutConfirmPage = new LogoutConfirmPage(driver);
+        this.infoPage = new InfoPage(driver);
+    }
 
     @Test
     @IgnoreBrowserDriver(FirefoxDriver.class)

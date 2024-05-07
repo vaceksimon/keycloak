@@ -17,7 +17,7 @@
 
 package org.keycloak.testsuite.webauthn;
 
-import org.jboss.arquillian.graphene.page.Page;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,6 +42,7 @@ import org.keycloak.testsuite.pages.InfoPage;
 import org.keycloak.testsuite.pages.LoginPage;
 import org.keycloak.testsuite.pages.LogoutConfirmPage;
 import org.keycloak.testsuite.pages.RegisterPage;
+import org.keycloak.testsuite.util.OAuthClient;
 import org.keycloak.testsuite.util.WaitUtils;
 import org.keycloak.testsuite.webauthn.authenticators.DefaultVirtualAuthOptions;
 import org.keycloak.testsuite.webauthn.authenticators.KcVirtualAuthenticator;
@@ -56,6 +57,8 @@ import org.keycloak.testsuite.webauthn.updaters.WebAuthnRealmAttributeUpdater;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.virtualauthenticator.Credential;
 import org.openqa.selenium.virtualauthenticator.VirtualAuthenticatorOptions;
 
@@ -85,28 +88,20 @@ public abstract class AbstractWebAuthnVirtualTest extends AbstractTestRealmKeycl
     @Rule
     public AssertEvents events = new AssertEvents(this);
 
-    @Page
     protected LoginPage loginPage;
 
-    @Page
     protected RegisterPage registerPage;
 
-    @Page
     protected WebAuthnRegisterPage webAuthnRegisterPage;
 
-    @Page
     protected WebAuthnErrorPage webAuthnErrorPage;
 
-    @Page
     protected WebAuthnLoginPage webAuthnLoginPage;
 
-    @Page
     protected AppPage appPage;
 
-    @Page
     protected LogoutConfirmPage logoutConfirmPage;
 
-    @Page
     protected InfoPage infoPage;
 
     protected static final String ALL_ZERO_AAGUID = "00000000-0000-0000-0000-000000000000";
@@ -123,6 +118,14 @@ public abstract class AbstractWebAuthnVirtualTest extends AbstractTestRealmKeycl
     protected final static PKCS8EncodedKeySpec privateKey = new PKCS8EncodedKeySpec(Base64.getUrlDecoder().decode(base64EncodedPK));
 
     private VirtualAuthenticatorManager virtualAuthenticatorManager;
+
+    public AbstractWebAuthnVirtualTest() {}
+
+    public AbstractWebAuthnVirtualTest(WebDriver driver) {
+        this.driver = driver;
+        oauth = new OAuthClient();
+        oauth.init(driver);
+    }
 
     @Before
     @Override

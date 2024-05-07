@@ -18,11 +18,16 @@
 package org.keycloak.testsuite.webauthn.passwordless;
 
 import org.keycloak.testsuite.webauthn.AppInitiatedActionWebAuthnTest;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author <a href="mailto:mabartos@redhat.com">Martin Bartos</a>
  */
 public class AppInitiatedActionPwdLessTest extends AppInitiatedActionWebAuthnTest {
+
+    public AppInitiatedActionPwdLessTest() {
+        super();
+    }
 
     @Override
     protected boolean isPasswordless() {
