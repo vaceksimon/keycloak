@@ -15,7 +15,7 @@
  * the License.
  */
 
-package org.keycloak.testsuite.admin.client;
+package org.keycloak.test.admin.client;
 
 import java.util.stream.Collectors;
 import org.hamcrest.MatcherAssert;
