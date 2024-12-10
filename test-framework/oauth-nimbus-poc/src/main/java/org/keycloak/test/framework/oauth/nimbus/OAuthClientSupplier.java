@@ -1,5 +1,6 @@
 package org.keycloak.test.framework.oauth.nimbus;
 
+import org.apache.http.client.HttpClient;
 import org.keycloak.test.framework.oauth.nimbus.annotations.InjectOAuthClient;
 import org.keycloak.test.framework.injection.InstanceContext;
 import org.keycloak.test.framework.injection.LifeCycle;
@@ -25,7 +26,8 @@ public class OAuthClientSupplier implements Supplier<OAuthClient, InjectOAuthCli
     public OAuthClient getValue(InstanceContext<OAuthClient, InjectOAuthClient> instanceContext) {
         ManagedRealm realm = instanceContext.getDependency(ManagedRealm.class);
         ClientConfig clientConfig = SupplierHelpers.getInstance(instanceContext.getAnnotation().config());
-        return new OAuthClient(realm, clientConfig);
+        HttpClient httpClient = instanceContext.getDependency(HttpClient.class);
+        return new OAuthClient(realm, clientConfig, httpClient);
     }
 
     @Override

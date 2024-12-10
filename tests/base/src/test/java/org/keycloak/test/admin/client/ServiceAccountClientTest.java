@@ -18,49 +18,60 @@
 package org.keycloak.test.admin.client;
 
 import java.util.stream.Collectors;
+
+import com.nimbusds.oauth2.sdk.TokenResponse;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.common.constants.ServiceAccountConstants;
 import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.keycloak.testsuite.admin.ApiUtil;
-import org.keycloak.testsuite.util.OAuthClient;
+import org.keycloak.test.framework.annotations.InjectClient;
+import org.keycloak.test.framework.annotations.InjectRealm;
+import org.keycloak.test.framework.annotations.KeycloakIntegrationTest;
+import org.keycloak.test.framework.oauth.nimbus.OAuthClient;
+import org.keycloak.test.framework.realm.ClientConfig;
+import org.keycloak.test.framework.realm.ClientConfigBuilder;
+import org.keycloak.test.framework.realm.ManagedClient;
+import org.keycloak.test.framework.realm.ManagedRealm;
+import org.keycloak.test.utils.admin.ApiUtil;
 
 /**
  *
  * @author rmartinc
  */
-public class ServiceAccountClientTest extends AbstractClientTest {
+@KeycloakIntegrationTest
+public class ServiceAccountClientTest {
 
+    private static final String CLIENT_ID = "service-account-client";
+
+    OAuthClient oAuthClient;
+
+    @InjectClient(config = ServiceAccountClientConfig.class)
+    ManagedClient client;
+
+    @InjectRealm
+    ManagedRealm realm;
 
     @Test
     public void testServiceAccountEnableDisable() throws Exception {
         ClientScopeRepresentation serviceAccountScope = ApiUtil.findClientScopeByName(
-                testRealmResource(), ServiceAccountConstants.SERVICE_ACCOUNT_SCOPE).toRepresentation();
+                realm.admin(), ServiceAccountConstants.SERVICE_ACCOUNT_SCOPE).toRepresentation();
 
-        // Create a client with service account enabled
-        ClientRepresentation clientRep = new ClientRepresentation();
-        clientRep.setClientId("service-account-client");
-        clientRep.setProtocol("openid-connect");
-        clientRep.setSecret("password");
-        clientRep.setServiceAccountsEnabled(Boolean.TRUE);
-        clientRep.setClientAuthenticatorType("client-secret");
-        clientRep.setPublicClient(Boolean.FALSE);
-        String clientUuid = createClient(clientRep);
-        ClientResource client = testRealmResource().clients().get(clientUuid);
-        getCleanup().addClientUuid(clientUuid);
-        MatcherAssert.assertThat(client.getDefaultClientScopes().stream().map(ClientScopeRepresentation::getName).collect(Collectors.toList()),
+        /* todo what is supposed to be the OAuth client. Are we supposed to use it in combination with another client or not?
+                an OAuthClient creates a client in a realm, but you can't access the client inside
+                you can't set oauth's clientid to a different client's ID
+
+         */
+
+        MatcherAssert.assertThat(oAuthClient.managedClient().admin().getDefaultClientScopes().stream().map(ClientScopeRepresentation::getName).collect(Collectors.toList()),
                 Matchers.hasItem("service_account"));
 
         // perform a login and check the claims are there
-        oauth.clientId("service-account-client");
-        OAuthClient.AccessTokenResponse response = oauth.doClientCredentialsGrantAccessTokenRequest("password");
-        AccessToken accessToken = oauth.verifyToken(response.getAccessToken());
+        TokenResponse response = oAuthClient.clientCredentialGrant();
+        AccessToken accessToken = oauth.verifyToken(response.toSuccessResponse().getTokens().getAccessToken());
         Assert.assertEquals("service-account-client", accessToken.getOtherClaims().get(ServiceAccountConstants.CLIENT_ID));
         Assert.assertNotNull(accessToken.getOtherClaims().get(ServiceAccountConstants.CLIENT_HOST));
         Assert.assertNotNull(accessToken.getOtherClaims().get(ServiceAccountConstants.CLIENT_ADDRESS));
@@ -104,5 +115,20 @@ public class ServiceAccountClientTest extends AbstractClientTest {
         testRealmResource().users().delete(serviceAccountUser.getId());
         response = oauth.doClientCredentialsGrantAccessTokenRequest("password");
         Assert.assertEquals("invalid_request", response.getError());
+    }
+
+    public static class ServiceAccountClientConfig implements ClientConfig {
+
+        @Override
+        public ClientConfigBuilder configure(ClientConfigBuilder client) {
+            return client
+                    .clientId(CLIENT_ID)
+                    .protocol("openid-connect")
+                    .secret("password")
+                    .serviceAccounts(true)
+                    .authenticatorType("client-secret")
+                    .publicClient(false);
+        }
+        // todo cleanup oauth client
     }
 }

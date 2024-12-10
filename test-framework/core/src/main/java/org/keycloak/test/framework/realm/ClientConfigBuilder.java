@@ -35,13 +35,28 @@ public class ClientConfigBuilder {
         return this;
     }
 
+    public ClientConfigBuilder publicClient(boolean publicClient) {
+        rep.setPublicClient(publicClient);
+        return this;
+    }
+
+    public ClientConfigBuilder protocol(String protocol) {
+        rep.setProtocol(protocol);
+        return this;
+    }
+
+    public ClientConfigBuilder authenticatorType(String authenticatorType) {
+        rep.setClientAuthenticatorType(authenticatorType);
+        return this;
+    }
+
     public ClientConfigBuilder redirectUris(String... redirectUris) {
         rep.setRedirectUris(Collections.combine(rep.getRedirectUris(), redirectUris));
         return this;
     }
 
-    public ClientConfigBuilder serviceAccount() {
-        rep.setServiceAccountsEnabled(true);
+    public ClientConfigBuilder serviceAccounts(boolean enabled) {
+        rep.setServiceAccountsEnabled(enabled);
         return this;
     }
 
