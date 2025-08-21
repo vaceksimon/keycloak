@@ -1,9 +1,13 @@
 package org.keycloak.tests.admin.realm;
 
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.testframework.annotations.InjectClient;
 import org.keycloak.testframework.annotations.InjectRealm;
 import org.keycloak.testframework.annotations.InjectUser;
 import org.keycloak.testframework.annotations.KeycloakIntegrationTest;
+import org.keycloak.testframework.injection.LifeCycle;
+import org.keycloak.testframework.realm.ManagedClient;
 import org.keycloak.testframework.realm.ManagedRealm;
 import org.keycloak.testframework.realm.ManagedUser;
 import org.keycloak.testframework.realm.RealmConfig;
@@ -15,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @KeycloakIntegrationTest
 public class KeyConfTest {
@@ -24,6 +29,23 @@ public class KeyConfTest {
 
     @InjectUser(config = UserConf.class)
     ManagedUser user;
+
+    @InjectClient(lifecycle = LifeCycle.METHOD)
+    ManagedClient client;
+
+    @Test
+    public void changeClientId() {
+        ClientRepresentation clientRep = client.admin().toRepresentation();
+        clientRep.setClientId("something-else");
+        client.admin().update(clientRep);
+
+        assertEquals("something-else", client.admin().toRepresentation().getClientId());
+    }
+
+    @Test
+    public void clientResets() {
+        assertNotEquals("something-else", client.admin().toRepresentation().getClientId());
+    }
 
     @Test
     public void realmNameTest() {
