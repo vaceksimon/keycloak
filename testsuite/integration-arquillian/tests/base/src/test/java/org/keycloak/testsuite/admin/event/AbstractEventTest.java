@@ -48,6 +48,13 @@ public abstract class AbstractEventTest extends AbstractAuthTest {
         oauth.realm("test");
     }
 
+    protected void enableEvents() {
+        configRep.setEventsEnabled(true);
+        configRep.setAdminEventsEnabled(Boolean.TRUE);
+
+        saveConfig();
+    }
+
     protected void saveConfig() {
         RealmResource testRsc = testRealmResource();
         testRsc.updateRealmEventsConfig(configRep);
