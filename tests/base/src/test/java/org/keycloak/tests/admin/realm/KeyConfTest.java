@@ -2,6 +2,7 @@ package org.keycloak.tests.admin.realm;
 
 import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.Test;
+import org.keycloak.common.Profile;
 import org.keycloak.testframework.annotations.InjectClient;
 import org.keycloak.testframework.annotations.InjectRealm;
 import org.keycloak.testframework.annotations.InjectUser;
@@ -13,6 +14,8 @@ import org.keycloak.testframework.realm.RealmConfig;
 import org.keycloak.testframework.realm.RealmConfigBuilder;
 import org.keycloak.testframework.realm.UserConfig;
 import org.keycloak.testframework.realm.UserConfigBuilder;
+import org.keycloak.testframework.server.KeycloakServerConfig;
+import org.keycloak.testframework.server.KeycloakServerConfigBuilder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
@@ -21,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@KeycloakIntegrationTest
+@KeycloakIntegrationTest(config = KeyConfTest.ServerConf.class)
 public class KeyConfTest {
 
     @InjectRealm(config = RealmConf.class)
@@ -100,6 +103,15 @@ public class KeyConfTest {
             return realm.name("keyconf")
                     .displayName("KeyConf25")
                     .registrationEmailAsUsername(true);
+        }
+    }
+
+    public static class ServerConf implements KeycloakServerConfig {
+
+        @Override
+        public KeycloakServerConfigBuilder configure(KeycloakServerConfigBuilder config) {
+            return config.features(Profile.Feature.AUTHORIZATION, Profile.Feature.IMPERSONATION)
+                    .option("metrics-enabled", "true");
         }
     }
 }
