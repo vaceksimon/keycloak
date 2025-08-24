@@ -1,12 +1,10 @@
 package org.keycloak.tests.admin.realm;
 
 import org.junit.jupiter.api.Test;
-import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.testframework.annotations.InjectClient;
 import org.keycloak.testframework.annotations.InjectRealm;
 import org.keycloak.testframework.annotations.InjectUser;
 import org.keycloak.testframework.annotations.KeycloakIntegrationTest;
-import org.keycloak.testframework.injection.LifeCycle;
 import org.keycloak.testframework.realm.ManagedClient;
 import org.keycloak.testframework.realm.ManagedRealm;
 import org.keycloak.testframework.realm.ManagedUser;
@@ -30,14 +28,12 @@ public class KeyConfTest {
     @InjectUser(config = UserConf.class)
     ManagedUser user;
 
-    @InjectClient(lifecycle = LifeCycle.METHOD)
+    @InjectClient
     ManagedClient client;
 
     @Test
     public void changeClientId() {
-        ClientRepresentation clientRep = client.admin().toRepresentation();
-        clientRep.setClientId("something-else");
-        client.admin().update(clientRep);
+        client.updateWithCleanup(client -> client.clientId("something-else"));
 
         assertEquals("something-else", client.admin().toRepresentation().getClientId());
     }
