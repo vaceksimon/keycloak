@@ -1,5 +1,6 @@
 package org.keycloak.tests.admin.realm;
 
+import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.keycloak.testframework.annotations.InjectClient;
 import org.keycloak.testframework.annotations.InjectRealm;
@@ -18,6 +19,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @KeycloakIntegrationTest
 public class KeyConfTest {
@@ -30,6 +32,12 @@ public class KeyConfTest {
 
     @InjectClient
     ManagedClient client;
+
+    @InjectRealm(ref = "realm2")
+    ManagedRealm realm2;
+
+    @InjectUser(realmRef = "realm2", ref = "user2")
+    ManagedUser user2;
 
     @Test
     public void changeClientId() {
@@ -54,9 +62,22 @@ public class KeyConfTest {
     @Test
     public void userInRealmTest() {
         String userId = user.getId();
+        String user2Id = user2.getId();
 
         assertDoesNotThrow(
                 () -> realm.admin().users().get(userId)
+        );
+        assertDoesNotThrow(
+                () -> realm2.admin().users().get(user2Id)
+        );
+
+        assertThrows(
+                NotFoundException.class,
+                () -> realm2.admin().users().get(userId).toRepresentation()
+        );
+        assertThrows(
+                NotFoundException.class,
+                () -> realm.admin().users().get(user2Id).toRepresentation()
         );
     }
 
