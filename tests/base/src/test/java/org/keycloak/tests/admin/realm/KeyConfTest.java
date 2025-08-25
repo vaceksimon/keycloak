@@ -1,6 +1,12 @@
 package org.keycloak.tests.admin.realm;
 
 import jakarta.ws.rs.NotFoundException;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.keycloak.common.Profile;
 import org.keycloak.testframework.annotations.InjectClient;
@@ -16,6 +22,9 @@ import org.keycloak.testframework.realm.UserConfig;
 import org.keycloak.testframework.realm.UserConfigBuilder;
 import org.keycloak.testframework.server.KeycloakServerConfig;
 import org.keycloak.testframework.server.KeycloakServerConfigBuilder;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
@@ -84,6 +93,20 @@ public class KeyConfTest {
         );
     }
 
+    @Test
+    public void httpGetTest() {
+        String url = realm.getBaseUrl();
+
+        HttpUriRequest request = new HttpGet(url + "/custom-provider/hello");
+        try {
+            HttpResponse response = HttpClientBuilder.create().build().execute(request);
+            Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
+
+            String content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            Assertions.assertEquals("Hello World!", content);
+        } catch (IOException ignored) {}
+    }
+
 
     private static class UserConf implements UserConfig {
 
@@ -111,7 +134,8 @@ public class KeyConfTest {
         @Override
         public KeycloakServerConfigBuilder configure(KeycloakServerConfigBuilder config) {
             return config.features(Profile.Feature.AUTHORIZATION, Profile.Feature.IMPERSONATION)
-                    .option("metrics-enabled", "true");
+                    .option("metrics-enabled", "true")
+                    .dependency("org.keycloak.testframework", "keycloak-test-framework-example-providers");
         }
     }
 }
