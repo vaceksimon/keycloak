@@ -8,9 +8,12 @@ import java.util.concurrent.TimeoutException;
 
 import org.keycloak.Keycloak;
 import org.keycloak.common.Version;
+import org.keycloak.it.TestProvider;
 import org.keycloak.platform.Platform;
 
 import io.quarkus.maven.dependency.Dependency;
+
+import org.keycloak.testframework.util.JarUtil;
 
 public class EmbeddedKeycloakServer implements KeycloakServer {
 
@@ -47,6 +50,24 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
                 }
             }
 
+        }
+
+        Set<TestProvider> buildDependencies = keycloakServerConfigBuilder.toBuildDependencies();
+        if (!buildDependencies.isEmpty()) {
+            if (homeDir == null) {
+                homeDir = Platform.getPlatform().getTmpDirectory().toPath();
+            }
+
+            Path providersPath = homeDir.resolve("providers");
+
+            if (!providersPath.toFile().exists()) {
+                providersPath.toFile().mkdirs();
+            }
+
+            for (TestProvider buildDependency : buildDependencies) {
+                Path classes = JarUtil.getProvidersTargetPath(buildDependency); // TODO rename variable
+                JarUtil.createProviderJar(buildDependency, classes, providersPath);
+            }
         }
 
         builder.setHomeDir(homeDir);

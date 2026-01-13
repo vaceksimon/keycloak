@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.keycloak.common.Profile;
+import org.keycloak.it.TestProvider;
 import org.keycloak.testframework.infinispan.CacheType;
 
 import io.quarkus.maven.dependency.Dependency;
@@ -31,6 +33,7 @@ public class KeycloakServerConfigBuilder {
     private final Set<String> featuresDisabled = new HashSet<>();
     private final LogBuilder log = new LogBuilder();
     private final Set<Dependency> dependencies = new HashSet<>();
+    private final Set<TestProvider> buildDependencies = new HashSet<>();
     private final Set<Path> configFiles = new HashSet<>();
     private CacheType cacheType = CacheType.LOCAL;
     private boolean externalInfinispan = false;
@@ -106,7 +109,66 @@ public class KeycloakServerConfigBuilder {
         dependencies.add(new DependencyBuilder().setGroupId(groupId).setArtifactId(artifactId).build());
         return this;
     }
-    
+
+    public BuildDependencyBuilder buildDependency() {
+        return new BuildDependencyBuilder(this);
+    }
+
+    private KeycloakServerConfigBuilder buildDependency(TestProvider testProvider) {
+        buildDependencies.add(testProvider);
+        return this;
+    }
+
+    public class BuildDependencyBuilder {
+
+        private final KeycloakServerConfigBuilder keycloakServerConfigBuilder;
+
+        private String name;
+        private final Set<Class<?>> classes = new HashSet<>();
+        private final Map<String, String> manifestResources = new HashMap<>();
+
+        private BuildDependencyBuilder(KeycloakServerConfigBuilder keycloakServerConfigBuilder) {
+            this.keycloakServerConfigBuilder = keycloakServerConfigBuilder;
+        }
+
+        public BuildDependencyBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public BuildDependencyBuilder clazz(Class<?>... dependency) {
+            classes.addAll(List.of(dependency));
+            return this;
+        }
+
+        public BuildDependencyBuilder manifestResource(String manifestFileName, String pathInsideJar) {
+            manifestResources.put(manifestFileName, pathInsideJar);
+            return this;
+        }
+
+        public KeycloakServerConfigBuilder build() {
+            name = name == null ? "provider-" + UUID.randomUUID() : name;
+            TestProvider testProvider = new TestProvider() {
+                @Override
+                public String getName() {
+                    return name;
+                }
+
+                @Override
+                public Class[] getClasses() {
+                    return classes.toArray(new Class[0]);
+                }
+
+                @Override
+                public Map<String, String> getManifestResources() {
+                    return manifestResources;
+                }
+            };
+
+            return keycloakServerConfigBuilder.buildDependency(testProvider);
+        }
+    }
+
     public KeycloakServerConfigBuilder cacheConfigFile(String resourcePath) {
         try {
             Path p = Paths.get(Objects.requireNonNull(getClass().getResource(resourcePath)).toURI());
@@ -233,6 +295,10 @@ public class KeycloakServerConfigBuilder {
 
     Set<Dependency> toDependencies() {
         return dependencies;
+    }
+
+    Set<TestProvider> toBuildDependencies() {
+        return buildDependencies;
     }
 
     Set<Path> toConfigFiles() {

@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.keycloak.it.TestProvider;
 import org.keycloak.it.utils.OutputConsumer;
 import org.keycloak.it.utils.RawKeycloakDistribution;
 
 import io.quarkus.maven.dependency.Dependency;
 import org.jboss.logging.Logger;
+
+import org.keycloak.testframework.util.JarUtil;
 
 public class DistributionKeycloakServer implements KeycloakServer {
 
@@ -40,6 +43,12 @@ public class DistributionKeycloakServer implements KeycloakServer {
 
         for (Dependency dependency : keycloakServerConfigBuilder.toDependencies()) {
             keycloak.copyProvider(dependency.getGroupId(), dependency.getArtifactId());
+        }
+
+        for (TestProvider buildDependency: keycloakServerConfigBuilder.toBuildDependencies()) {
+            Path providersDir = keycloak.getProvidersDirPath();
+            Path classes = JarUtil.getProvidersTargetPath(buildDependency); // TODO rename variable
+            JarUtil.createProviderJar(buildDependency, classes, providersDir);
         }
 
         for (Path configFile : keycloakServerConfigBuilder.toConfigFiles()) {
