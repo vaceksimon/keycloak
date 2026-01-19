@@ -8,12 +8,15 @@ import java.util.concurrent.TimeoutException;
 
 import org.keycloak.Keycloak;
 import org.keycloak.common.Version;
-import org.keycloak.it.TestProvider;
 import org.keycloak.platform.Platform;
-
-import io.quarkus.maven.dependency.Dependency;
-
 import org.keycloak.testframework.util.JarUtil;
+
+import io.quarkus.bootstrap.resolver.maven.BootstrapMavenException;
+import io.quarkus.bootstrap.resolver.maven.workspace.LocalProject;
+import io.quarkus.maven.dependency.Dependency;
+import io.quarkus.paths.PathCollection;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public class EmbeddedKeycloakServer implements KeycloakServer {
 
@@ -26,9 +29,7 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
         Keycloak.Builder builder = Keycloak.builder().setVersion(Version.VERSION);
         this.tlsEnabled = tlsEnabled;
 
-        for(Dependency dependency : keycloakServerConfigBuilder.toDependencies()) {
-            builder.addDependency(dependency.getGroupId(), dependency.getArtifactId(), "");
-        }
+        deployDependencies(keycloakServerConfigBuilder.toDependencies(), builder);
 
         Set<Path> configFiles = keycloakServerConfigBuilder.toConfigFiles();
         if (!configFiles.isEmpty()) {
@@ -52,26 +53,51 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
 
         }
 
-        Set<TestProvider> buildDependencies = keycloakServerConfigBuilder.toBuildDependencies();
-        if (!buildDependencies.isEmpty()) {
-            if (homeDir == null) {
-                homeDir = Platform.getPlatform().getTmpDirectory().toPath();
-            }
-
-            Path providersPath = homeDir.resolve("providers");
-
-            if (!providersPath.toFile().exists()) {
-                providersPath.toFile().mkdirs();
-            }
-
-            for (TestProvider buildDependency : buildDependencies) {
-                Path classes = JarUtil.getProvidersTargetPath(buildDependency); // TODO rename variable
-                JarUtil.createProviderJar(buildDependency, classes, providersPath);
-            }
-        }
-
         builder.setHomeDir(homeDir);
         keycloak = builder.start(keycloakServerConfigBuilder.toArgs());
+    }
+
+    private void deployDependencies(Set<Dependency> dependencies, Keycloak.Builder builder) {
+        if (!getDependencyHotDeploy()) {
+            for(Dependency dependency : dependencies) {
+                builder.addDependency(dependency.getGroupId(), dependency.getArtifactId(), "");
+            }
+        } else {
+            hotDeployDependencies(dependencies);
+        }
+    }
+
+    private void hotDeployDependencies(Set<Dependency> dependencies) {
+        if (homeDir == null) {
+            homeDir = Platform.getPlatform().getTmpDirectory().toPath();
+        }
+        Path providersDir = homeDir.resolve("providers");
+        if (!providersDir.toFile().mkdirs()) {
+            throw new RuntimeException("Failed to create the providers directory " + providersDir.toFile());
+        }
+
+        try {
+            LocalProject projectRoot = LocalProject.loadWorkspace(Path.of("."));
+            while (projectRoot.getLocalParent() != null) {
+                projectRoot = projectRoot.getLocalParent();
+            }
+
+            for (Dependency dependency : dependencies) {
+                LocalProject dependencyModule = projectRoot.getWorkspace().getProject(dependency.getGroupId(), dependency.getArtifactId());
+                if (dependencyModule == null) {
+                    throw new RuntimeException("No such artifact in the project: " + dependency.getGroupId() + ":" + dependency.getArtifactId());
+                }
+
+                String jarName = dependencyModule.getArtifactId() + "-" + dependencyModule.getVersion() + ".jar";
+                Path sources = dependencyModule.getSourcesSourcesDir();
+                PathCollection resources = dependencyModule.getResourcesSourcesDirs();
+
+                JavaArchive builtDependency = JarUtil.buildJar(jarName, sources, resources);
+                builtDependency.as(ZipExporter.class).exportTo(providersDir.resolve(jarName).toFile(), true);
+            }
+        } catch (BootstrapMavenException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
