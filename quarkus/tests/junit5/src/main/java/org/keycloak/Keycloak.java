@@ -23,6 +23,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
+
+import io.quarkus.bootstrap.app.AdditionalDependency;
 
 import org.keycloak.common.Version;
 import org.keycloak.common.crypto.FipsMode;
@@ -200,6 +203,8 @@ public class Keycloak {
                 .setFlatClassPath(true)
                 .setMode(QuarkusBootstrap.Mode.TEST);
 
+        deployProviders(builder);
+
         try {
             curated = builder.build().bootstrap();
             AugmentAction action = curated.createAugmentor();
@@ -214,6 +219,22 @@ public class Keycloak {
             return this;
         } catch (Exception cause) {
             throw new RuntimeException("Fail to start the server", cause);
+        }
+    }
+
+    private void deployProviders(QuarkusBootstrap.Builder builder) {
+        Path providersDir = homeDir.resolve("providers");
+        if (providersDir.toFile().isDirectory()) {
+            try (Stream<Path> sourcePathStream = Files.walk(providersDir)) {
+                sourcePathStream.filter(Files::isRegularFile)
+                        .filter(p -> p.endsWith(".jar"))
+                        .forEach(p -> {
+                            AdditionalDependency additionalDependency = new AdditionalDependency(p, false, true);
+                            builder.addAdditionalApplicationArchive(additionalDependency);
+                        });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -1,68 +1,61 @@
 package org.keycloak.testframework.util;
 
 
+import io.quarkus.paths.PathCollection;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.keycloak.it.TestProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 public class JarUtil {
 
     /**
-     * Returns the location of the <code>target/classes</code> directory of the provider.
-     * @param provider
-     * @return
+     *
+     * @param jarName the name of the created Java Archive
+     * @param sources <code>src/main/java</code> directory of a module
+     * @param resourcesCollection all resource dirs of a module (<code>src/main/resources</code>)
+     * @return built JAR of the provided sources
      */
-    public static Path getProvidersTargetPath(TestProvider provider) {
-        String fullPathUrl = provider.getClasses()[0].getResource(".").toString();
-        String providersTargetPath = provider.getClasses()[0].getPackageName().replace('.', '/').concat("/");
-        URL pathUrl;
-        try {
-            pathUrl = new URL(fullPathUrl.replace(providersTargetPath, ""));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Invalid package provider path", e);
+    public static JavaArchive buildJar(String jarName, Path sources, PathCollection resourcesCollection) {
+        JavaArchive providerJar = ShrinkWrap.create(JavaArchive.class, jarName);
+
+        try (Stream<Path> sourcePathStream = Files.walk(sources)) {
+            sourcePathStream.filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".java"))
+                    .forEach(p -> {
+                        String classFileName = sources.relativize(p).toString();
+                        String fullyQualifiedClassName = classFileName.replace(File.separatorChar, '.')
+                                .substring(0, classFileName.lastIndexOf('.'));
+                        providerJar.addClass(fullyQualifiedClassName);
+                    });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        File fileUri;
-        try {
-            fileUri = new File(pathUrl.toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Invalid package provider path", e);
-        }
-        return Paths.get(fileUri.getPath());
-    }
-
-    /**
-     * Creates a Java Archive with a provider that should be able to load when placed in the <code>providers</code> dir of a kc distribution
-     * @param provider
-     * @param providersTargetPath Directory containing the compiled <code>.class</code> files of the provider
-     * @param jarPath Where the JAR is supposed to be saved.
-     * @return The path of the created JAR. Basically <code>jarPath</code> + <i>jarName</i>.jar
-     */
-    public static Path createProviderJar(TestProvider provider, Path providersTargetPath, Path jarPath) {
-        String jarName =  provider.getName() + ".jar";
-        JavaArchive providerJar = ShrinkWrap.create(JavaArchive.class, jarName)
-                .addClasses(provider.getClasses());
-        Map<String, String> manifestResources = provider.getManifestResources();
-
-        for (Map.Entry<String, String> resource : manifestResources.entrySet()) {
-            try {
-                providerJar.addAsManifestResource(providersTargetPath.resolve("META-INF/" + resource.getKey()).toFile(), resource.getValue());
-            } catch (Exception cause) {
-                throw new RuntimeException("Failed to add manifest resource: " + resource.getKey(), cause);
+        for (Path resources : resourcesCollection) {
+            try (Stream<Path> paths = Files.walk(resources)) {
+                paths.filter(Files::isRegularFile)
+                        .forEach(p -> {
+                            File resourceFile = p.toFile();
+                            providerJar.addAsResource(resourceFile, resources.relativize(p).toString());
+                        });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        providerJar.as(ZipExporter.class).exportTo(jarPath.resolve(providerJar.getName()).toFile(), true);
-        return jarPath.resolve(jarName);
+        return providerJar;
     }
 }
