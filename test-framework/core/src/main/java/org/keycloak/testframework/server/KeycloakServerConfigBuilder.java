@@ -104,7 +104,7 @@ public class KeycloakServerConfigBuilder {
     }
 
     public KeycloakServerConfigBuilder dependency(String groupId, String artifactId) {
-        return this.dependency(groupId, artifactId, false);
+        return dependency(groupId, artifactId, false);
     }
 
     public KeycloakServerConfigBuilder dependency(String groupId, String artifactId, boolean allowHotDeploy) {

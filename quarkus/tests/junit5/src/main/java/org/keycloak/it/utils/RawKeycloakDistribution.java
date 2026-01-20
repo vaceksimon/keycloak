@@ -685,10 +685,6 @@ public final class RawKeycloakDistribution implements KeycloakDistribution {
         return distPath;
     }
 
-    public Path getProvidersDirPath() {
-        return distPath.resolve("providers");
-    }
-
     public void copyProvider(TestProvider provider) {
         URL pathUrl = provider.getClass().getResource(".");
         File fileUri;
@@ -713,7 +709,7 @@ public final class RawKeycloakDistribution implements KeycloakDistribution {
 
         copyOrReplaceFile(providerPackagePath.resolve("quarkus.properties"), Path.of("conf", "quarkus.properties"));
 
-        providerJar.as(ZipExporter.class).exportTo(getProvidersDirPath().resolve(providerJar.getName()).toFile());
+        providerJar.as(ZipExporter.class).exportTo(getDistPath().resolve("providers").resolve(providerJar.getName()).toFile());
     }
 
     @Override
