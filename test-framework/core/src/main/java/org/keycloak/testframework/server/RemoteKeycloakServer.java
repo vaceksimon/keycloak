@@ -63,7 +63,7 @@ public class RemoteKeycloakServer implements KeycloakServer {
         out.println(String.join(" \\\n", config.toArgs()));
         out.println();
 
-        Set<KeycloakServerDependency> dependencies = config.toDependencies();
+        Set<Dependency> dependencies = config.toDependencies();
         if (!dependencies.isEmpty()) {
             out.println("Requested providers:");
             for (Dependency d : dependencies) {
@@ -86,7 +86,7 @@ public class RemoteKeycloakServer implements KeycloakServer {
         out.println("Remote Keycloak server is not running on " + getBaseUrl() + ", please start Keycloak with:");
         out.println();
 
-        Set<KeycloakServerDependency> dependencies = config.toDependencies();
+        Set<Dependency> dependencies = config.toDependencies();
         if (!dependencies.isEmpty()) {
             String dependencyPaths = dependencies.stream().map(d -> Maven.resolveArtifact(d.getGroupId(), d.getArtifactId()).toString()).collect(Collectors.joining(","));
             out.println("KCW_PROVIDERS=" + dependencyPaths + " \\");

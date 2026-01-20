@@ -30,9 +30,7 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
         Keycloak.Builder builder = Keycloak.builder().setVersion(Version.VERSION);
         this.tlsEnabled = tlsEnabled;
 
-        // todo musim vymyslet co s temi zavislostmi. Jak je budu teda uchovavat
-        // todo bud to vsude zmenim na tento typ, anebo budou dva seznamy zavislosti, jeden na hot deploy a druhy ne
-        deployDependencies(keycloakServerConfigBuilder.toDependencies(), builder);
+        deployDependencies(keycloakServerConfigBuilder.toDependencies(), keycloakServerConfigBuilder.toHotDeployDependencies(), builder);
 
         Set<Path> configFiles = keycloakServerConfigBuilder.toConfigFiles();
         if (!configFiles.isEmpty()) {
@@ -60,19 +58,21 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
         keycloak = builder.start(keycloakServerConfigBuilder.toArgs());
     }
 
-    private void deployDependencies(Set<KeycloakServerDependency> dependencies, Keycloak.Builder builder) {
+    private void deployDependencies(Set<Dependency> dependencies, Set<Dependency> hotDeployDependencies, Keycloak.Builder builder) {
+        for(Dependency dependency : dependencies) {
+            builder.addDependency(dependency.getGroupId(), dependency.getArtifactId(), "");
+        }
+
         if (!getDependencyHotDeploy()) {
-            for(Dependency dependency : dependencies) {
-                builder.addDependency(dependency.getGroupId(), dependency.getArtifactId(), "");
+            for(Dependency hotDeployDependency : hotDeployDependencies) {
+                builder.addDependency(hotDeployDependency.getGroupId(), hotDeployDependency.getArtifactId(), "");
             }
         } else {
-            dependencies.stream().filter(d -> !d.allowHotDeploy())
-                            .forEach(d -> builder.addDependency(d.getGroupId(), d.getArtifactId(), ""));
-            hotDeployDependencies(dependencies.stream().filter(KeycloakServerDependency::allowHotDeploy).collect(Collectors.toSet()));
+            hotDeployDependencies(hotDeployDependencies);
         }
     }
 
-    private void hotDeployDependencies(Set<KeycloakServerDependency> dependencies) {
+    private void hotDeployDependencies(Set<Dependency> hotDeployDependencies) {
         if (homeDir == null) {
             homeDir = Platform.getPlatform().getTmpDirectory().toPath();
         }
@@ -87,7 +87,7 @@ public class EmbeddedKeycloakServer implements KeycloakServer {
                 projectRoot = projectRoot.getLocalParent();
             }
 
-            for (Dependency dependency : dependencies) {
+            for (Dependency dependency : hotDeployDependencies) {
                 LocalProject dependencyModule = projectRoot.getWorkspace().getProject(dependency.getGroupId(), dependency.getArtifactId());
                 if (dependencyModule == null) {
                     throw new RuntimeException("No such artifact in the project: " + dependency.getGroupId() + ":" + dependency.getArtifactId());
