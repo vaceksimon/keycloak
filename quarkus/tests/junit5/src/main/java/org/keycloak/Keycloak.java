@@ -227,7 +227,7 @@ public class Keycloak {
         if (providersDir.toFile().isDirectory()) {
             try (Stream<Path> sourcePathStream = Files.walk(providersDir)) {
                 sourcePathStream.filter(Files::isRegularFile)
-                        .filter(p -> p.endsWith(".jar"))
+                        .filter(p -> p.toString().endsWith(".jar"))
                         .forEach(p -> {
                             AdditionalDependency additionalDependency = new AdditionalDependency(p, false, true);
                             builder.addAdditionalApplicationArchive(additionalDependency);

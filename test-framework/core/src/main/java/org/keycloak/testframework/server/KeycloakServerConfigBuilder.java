@@ -30,7 +30,7 @@ public class KeycloakServerConfigBuilder {
     private final Set<String> features = new HashSet<>();
     private final Set<String> featuresDisabled = new HashSet<>();
     private final LogBuilder log = new LogBuilder();
-    private final Set<Dependency> dependencies = new HashSet<>();
+    private final Set<KeycloakServerDependency> dependencies = new HashSet<>();
     private final Set<Path> configFiles = new HashSet<>();
     private CacheType cacheType = CacheType.LOCAL;
     private boolean externalInfinispan = false;
@@ -103,7 +103,12 @@ public class KeycloakServerConfigBuilder {
     }
 
     public KeycloakServerConfigBuilder dependency(String groupId, String artifactId) {
-        dependencies.add(new DependencyBuilder().setGroupId(groupId).setArtifactId(artifactId).build());
+        return this.dependency(groupId, artifactId, false);
+    }
+
+    public KeycloakServerConfigBuilder dependency(String groupId, String artifactId, boolean allowHotDeploy) {
+//        dependencies.add(new DependencyBuilder().setGroupId(groupId).setArtifactId(artifactId).build());
+        dependencies.add(new KeycloakServerDependency.KeycloakServerDependencyBuilder().allowHotDeploy(allowHotDeploy).setGroupId(groupId).setArtifactId(artifactId).build());
         return this;
     }
 
@@ -231,7 +236,7 @@ public class KeycloakServerConfigBuilder {
         return args;
     }
 
-    Set<Dependency> toDependencies() {
+    Set<KeycloakServerDependency> toDependencies() {
         return dependencies;
     }
 
