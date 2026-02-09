@@ -170,12 +170,27 @@ public class KeycloakServerConfigBuilder {
      * @return
      */
     public KeycloakServerConfigBuilder dependency(String groupId, String artifactId) {
-        return dependency(groupId, artifactId, false);
+        return dependency(groupId, artifactId, false, false);
     }
 
     public KeycloakServerConfigBuilder dependency(String groupId, String artifactId, boolean hotDeployable) {
-        dependencies.add(new KeycloakDependency.Builder().setGroupId(groupId).setArtifactId(artifactId).hotDeployable(hotDeployable).build());
+        return dependency(groupId, artifactId, hotDeployable, false);
+    }
+
+    private KeycloakServerConfigBuilder dependency(String groupId, String artifactId, boolean hotDeployable, boolean dependencyCurrentProject) {
+        dependencies.add(
+                new KeycloakDependency.Builder()
+                        .setGroupId(groupId)
+                        .setArtifactId(artifactId)
+                        .hotDeployable(hotDeployable)
+                        .dependencyCurrentProject(dependencyCurrentProject)
+                        .build()
+        );
         return this;
+    }
+
+    public KeycloakServerConfigBuilder dependencyCurrentProject() {
+        return dependency("", "", false, true);
     }
 
     public class LogBuilder {

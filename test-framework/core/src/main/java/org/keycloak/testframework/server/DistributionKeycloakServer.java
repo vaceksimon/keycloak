@@ -35,10 +35,11 @@ import org.keycloak.it.utils.Maven;
 import org.keycloak.quarkus.runtime.Environment;
 import org.keycloak.representations.info.ServerInfoRepresentation;
 import org.keycloak.testframework.util.FileUtils;
-import org.keycloak.testframework.util.JarUtil;
+import org.keycloak.testframework.util.MavenProjectUtil;
 import org.keycloak.testframework.util.ProcessUtils;
 import org.keycloak.testframework.util.TmpDir;
 
+import io.quarkus.bootstrap.resolver.maven.workspace.LocalProject;
 import io.quarkus.fs.util.ZipUtils;
 import org.jboss.logging.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -175,7 +176,17 @@ public class DistributionKeycloakServer implements KeycloakServer {
     }
 
     private static String getProviderJarName(KeycloakDependency dependency) {
-        return dependency.getGroupId() + "__" + dependency.getArtifactId() + ".jar";
+        String groupId = dependency.getGroupId();
+        String artifactId = dependency.getArtifactId();
+
+        if (dependency.dependencyCurrentProject()) {
+            LocalProject project = MavenProjectUtil.getCurrentModule();
+
+            groupId = project.getGroupId();
+            artifactId = project.getArtifactId();
+        }
+
+        return groupId + "__" + artifactId + ".jar";
     }
 
     private static void updateProviders(List<File> existingProviders, Set<KeycloakDependency> dependencies, File providersDir) throws IOException {
@@ -196,10 +207,10 @@ public class DistributionKeycloakServer implements KeycloakServer {
         Path providersPath = providersDir.toPath();
 
         for (KeycloakDependency d : dependencies) {
-            boolean shouldBuildFromSources = hotDeployEnabled && d.isHotDeployable();
+            boolean shouldPackageClasses = hotDeployEnabled && d.isHotDeployable();
 
             String jarName = getProviderJarName(d);
-            Path dependencyPath = getDependencyPath(d, shouldBuildFromSources);
+            Path dependencyPath = getDependencyPath(d, shouldPackageClasses);
             File dependencyFile = dependencyPath.toFile();
             Path targetPath = providersPath.resolve(jarName);
             File targetFile = targetPath.toFile();
@@ -209,8 +220,8 @@ public class DistributionKeycloakServer implements KeycloakServer {
             if (lastModified != dependencyPath.toFile().lastModified() || !targetFile.isFile()) {
                 log.trace("Adding or overriding existing provider: " + targetPath.toFile().getAbsolutePath());
 
-                if (shouldBuildFromSources) {
-                    JarUtil.buildModuleJar(jarName, dependencyPath, targetPath);
+                if (shouldPackageClasses || d.dependencyCurrentProject()) {
+                    MavenProjectUtil.buildJar(jarName, dependencyPath, targetPath);
                 } else {
                     Files.copy(dependencyPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -219,12 +230,16 @@ public class DistributionKeycloakServer implements KeycloakServer {
         }
     }
 
-    private static Path getDependencyPath(KeycloakDependency d, boolean buildFromSources) {
-        if (buildFromSources) {
-            return Maven.findLocalModule(d.getGroupId(), d.getArtifactId()).getClassesDir();
-        } else {
-            return Maven.resolveArtifact(d.getGroupId(), d.getArtifactId());
+    private static Path getDependencyPath(KeycloakDependency d, boolean shouldPackageClasses) {
+        if (d.dependencyCurrentProject()) {
+            return MavenProjectUtil.getCurrentModule().getClassesDir();
         }
+
+        if (shouldPackageClasses) {
+            return MavenProjectUtil.findLocalModule(d.getGroupId(), d.getArtifactId()).getClassesDir();
+        }
+
+        return Maven.resolveArtifact(d.getGroupId(), d.getArtifactId());
     }
 
     @Override
@@ -341,7 +356,7 @@ public class DistributionKeycloakServer implements KeycloakServer {
             return;
         }
         keycloakProcess.destroy();
-        throw new RuntimeException("Keycloak did not start within timeout [" + startTimeout + "s]: " + getErrorOutput());
+        throw new RuntimeException("Keycloak did not start within timeout: " + getErrorOutput());
     }
 
     private File getZipLastModifiedFile(File dir) {

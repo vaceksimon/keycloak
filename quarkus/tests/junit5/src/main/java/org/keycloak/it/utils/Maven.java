@@ -46,7 +46,6 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 public final class Maven {
 
     private static BootstrapMavenContext context;
-    private static LocalProject rootModuleProject;
 
     public static Path resolveArtifact(String groupId, String artifactId) {
         return getArtifact(groupId, artifactId).getFile().toPath();
@@ -138,48 +137,31 @@ public final class Maven {
         return artifactResults.get(0).getArtifact();
     }
 
-    private static LocalProject getRootModuleProject() {
-        // Find keycloak-parent module
-        if (rootModuleProject != null) {
-            return rootModuleProject;
-        }
-
-        BootstrapMavenContext ctx = null;
-        try {
-            ctx = bootstrapCurrentMavenContext();
-        } catch (BootstrapMavenException | URISyntaxException e) {
-            throw new RuntimeException("Failed bootstrap maven context", e);
-        }
+    public static Path getKeycloakQuarkusModulePath() {
+        // Find keycloak-parent module first
+        BootstrapMavenContext ctx = bootstrapCurrentMavenContext();
         for (LocalProject m = ctx.getCurrentProject(); m != null; m = m.getLocalParent()) {
             if ("keycloak-parent".equals(m.getArtifactId())) {
-                rootModuleProject = m;
-                return rootModuleProject;
+                // When found, advance to quarkus module
+                return m.getDir().resolve("quarkus");
             }
         }
 
         throw new RuntimeException("Failed to find keycloak-parent module.");
     }
 
-    public static Path getKeycloakQuarkusModulePath() {
-        return getRootModuleProject().getDir().resolve("quarkus");
-    }
-
-    public static LocalProject findLocalModule(String groupId, String artifactId) {
-        LocalProject dependencyModule = getRootModuleProject().getWorkspace().getProject(groupId, artifactId);
-        if (dependencyModule == null) {
-            throw new RuntimeException("Failed to resolve artifact in this project: [" + groupId + ":" + artifactId + "]");
+    public static BootstrapMavenContext bootstrapCurrentMavenContext() {
+        try {
+            if (context == null) {
+                Path classPathDir = Paths.get(Thread.currentThread().getContextClassLoader().getResource(".").toURI());
+                Path projectDir = BuildToolHelper.getProjectDir(classPathDir);
+                context = new BootstrapMavenContext(
+                        BootstrapMavenContext.config().setPreferPomsFromWorkspace(true).setWorkspaceModuleParentHierarchy(true)
+                                .setCurrentProject(projectDir.toString()));
+            }
+            return context;
+        } catch (BootstrapMavenException | URISyntaxException e) {
+            throw new RuntimeException("Failed bootstrap maven context", e);
         }
-        return dependencyModule;
-    }
-
-    public static BootstrapMavenContext bootstrapCurrentMavenContext() throws BootstrapMavenException, URISyntaxException {
-        if (context == null) {
-            Path classPathDir = Paths.get(Thread.currentThread().getContextClassLoader().getResource(".").toURI());
-            Path projectDir = BuildToolHelper.getProjectDir(classPathDir);
-            context = new BootstrapMavenContext(
-                    BootstrapMavenContext.config().setPreferPomsFromWorkspace(true).setWorkspaceModuleParentHierarchy(true)
-                            .setCurrentProject(projectDir.toString()));
-        }
-        return context;
     }
 }

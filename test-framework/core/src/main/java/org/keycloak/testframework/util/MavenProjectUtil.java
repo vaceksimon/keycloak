@@ -7,21 +7,55 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import org.keycloak.it.utils.Maven;
+
+import io.quarkus.bootstrap.resolver.maven.BootstrapMavenContext;
+import io.quarkus.bootstrap.resolver.maven.workspace.LocalProject;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 
-public class JarUtil {
+public final class MavenProjectUtil {
+
+    private static LocalProject rootModuleProject;
+
+    private static LocalProject getRootModule() {
+        if (rootModuleProject != null) {
+            return rootModuleProject;
+        }
+
+        BootstrapMavenContext ctx = Maven.bootstrapCurrentMavenContext();
+        LocalProject m = ctx.getCurrentProject();
+        while (m.getLocalParent() != null) {
+            m = m.getLocalParent();
+        }
+        rootModuleProject = m;
+        return rootModuleProject;
+    }
+
+    public static LocalProject findLocalModule(String groupId, String artifactId) {
+        LocalProject rootModule = getRootModule();
+        LocalProject dependencyModule = rootModule.getWorkspace().getProject(groupId, artifactId);
+        if (dependencyModule == null) {
+            throw new RuntimeException("Failed to resolve artifact in this project: [" + groupId + ":" + artifactId + "]");
+        }
+        return dependencyModule;
+    }
+
+    public static LocalProject getCurrentModule() {
+        BootstrapMavenContext ctx = Maven.bootstrapCurrentMavenContext();
+        return ctx.getCurrentProject();
+    }
 
     /**
-     * Builds a JAR from already-compiled classes and resources.
+     * Builds and exports a JAR from compiled classes and resources.
      *
      * @param jarName the JAR filename
      * @param classesPath path to compiled output directory ({@code target/classes})
      * @param targetPath path where to export the JAR
      */
-    public static void buildModuleJar(String jarName, Path classesPath, Path targetPath) {
+    public static void buildJar(String jarName, Path classesPath, Path targetPath) {
         JavaArchive providerJar = ShrinkWrap.create(JavaArchive.class, jarName);
 
         try (Stream<Path> sourcePathStream = Files.walk(classesPath)) {
