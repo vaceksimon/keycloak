@@ -80,6 +80,16 @@
                 <artifactId>testcontainers-postgresql</artifactId>
                 <version>${version.testcontainers}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-api</artifactId>
+                <version>${version.shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-impl-base</artifactId>
+                <version>${version.shrinkwrap}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
