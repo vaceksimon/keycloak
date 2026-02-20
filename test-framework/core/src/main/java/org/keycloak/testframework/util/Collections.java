@@ -74,8 +74,4 @@ public class Collections {
         return combine(m1, Map.of(key, values.toList()));
     }
 
-    public static <T> boolean equals(Set<T> a, Set<T> b) {
-        return a.size() == b.size() && a.containsAll(b);
-    }
-
 }

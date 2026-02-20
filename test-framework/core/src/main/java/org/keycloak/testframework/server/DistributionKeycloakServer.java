@@ -70,7 +70,7 @@ public class DistributionKeycloakServer implements KeycloakServer {
                 killPreviousProcess();
             }
 
-            ProviderDeployer providerDeployer = new ProviderDeployer(log, keycloakHomeDir, keycloakServerConfigBuilder.toDependencies());
+            ProviderDeployer providerDeployer = new ProviderDeployer(log, keycloakHomeDir, keycloakServerConfigBuilder.toDependencies(), KeycloakServer.getDependencyHotDeployEnabled());
 
             if (!installationCreated && reuse && ping()) {
                 checkRunning();
@@ -79,7 +79,8 @@ public class DistributionKeycloakServer implements KeycloakServer {
                 String startedWithArgs = startupArgsFile.isFile() ? FileUtils.readStringFromFile(startupArgsFile) : null;
                 String requestedArgs = String.join(" ", args);
 
-                if (requestedArgs.equals(startedWithArgs) && providerDeployer.areDependenciesCompatible()) {
+                boolean dependenciesChanged = providerDeployer.updateDependencies();
+                if (requestedArgs.equals(startedWithArgs) && !dependenciesChanged) {
                     log.trace("Re-using already running Keycloak");
                     return;
                 } else {
@@ -89,9 +90,9 @@ public class DistributionKeycloakServer implements KeycloakServer {
                         throw new RuntimeException("Running Keycloak not started with required arguments or providers, and could not kill the current process");
                     }
                 }
+            } else {
+                providerDeployer.updateDependencies();
             }
-
-            providerDeployer.updateDependencies();
 
             OutputHandler outputHandler = startKeycloak(args);
 

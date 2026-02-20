@@ -9,59 +9,47 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.keycloak.it.utils.Maven;
-import org.keycloak.testframework.util.Collections;
 import org.keycloak.testframework.util.FileUtils;
 import org.keycloak.testframework.util.MavenProjectUtil;
 
 import io.quarkus.bootstrap.resolver.maven.workspace.LocalProject;
 import org.jboss.logging.Logger;
 
-public final class ProviderDeployer {
+final class ProviderDeployer {
 
     private final Logger log;
-
     private final File providersDir;
-    private final Path providersPath;
     private final boolean hotDeployEnabled;
-
     private final Set<KeycloakDependency> requestedDependencies;
-    private final List<File> existingDependencies;
 
-    public ProviderDeployer(Logger log, File keycloakHomeDir, Set<KeycloakDependency> requestedDependencies) {
+    ProviderDeployer(Logger log, File keycloakHomeDir, Set<KeycloakDependency> requestedDependencies, boolean hotDeployEnabled) {
         this.log = log;
-
         this.providersDir = new File(keycloakHomeDir, "providers");
-        this.providersPath = providersDir.toPath();
-
         this.requestedDependencies = requestedDependencies;
-        this.existingDependencies = listExistingDependencies();
-
-        this.hotDeployEnabled = KeycloakServer.getDependencyHotDeployEnabled();
+        this.hotDeployEnabled = hotDeployEnabled;
     }
 
-    public boolean areDependenciesCompatible() {
-        Set<String> requestedDependencies = this.requestedDependencies.stream().map(this::getDependencyJarName).collect(Collectors.toSet());
-        Set<String> startedWithDependencies = this.existingDependencies.stream().map(File::getName).collect(Collectors.toSet());
-        return Collections.equals(requestedDependencies, startedWithDependencies);
-    }
-
-    public void updateDependencies() throws IOException {
-        deleteNotRequestedDependencies();
+    boolean updateDependencies() throws IOException {
+        boolean anyDependenciesModified = deleteNotRequestedDependencies();
 
         for (KeycloakDependency d : requestedDependencies) {
             boolean shouldPackageClasses = hotDeployEnabled && d.isHotDeployable();
 
             String jarName = getDependencyJarName(d);
-            Path dependencyPath = getDependencyPath(d);
-            File dependencyFile = dependencyPath.toFile();
-            Path targetPath = providersPath.resolve(jarName);
-            File targetFile = targetPath.toFile();
-            File targetLastModified = new File(targetFile.getAbsolutePath() + ".lastModified");
-            long lastModified = targetLastModified.isFile() ? FileUtils.readLongFromFile(targetLastModified) : -1;
 
-            if (lastModified != dependencyPath.toFile().lastModified() || !targetFile.isFile()) {
+            Path dependencyPath = getDependencyPath(d);
+            Path targetPath = providersDir.toPath().resolve(jarName);
+
+            File targetFile = targetPath.toFile();
+
+            long dependencyLastModified = getMostRecentModification(dependencyPath);
+            File targetLastModifiedFile = new File(targetFile.getAbsolutePath() + ".lastModified");
+            long targetLastModified = targetLastModifiedFile.isFile() ? FileUtils.readLongFromFile(targetLastModifiedFile) : -1;
+
+            if (dependencyLastModified != targetLastModified || !targetFile.isFile()) {
                 log.trace("Adding or overwriting existing provider: " + targetPath.toFile().getAbsolutePath());
 
                 if (shouldPackageClasses || d.dependencyCurrentProject()) {
@@ -69,19 +57,11 @@ public final class ProviderDeployer {
                 } else {
                     Files.copy(dependencyPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-                Files.writeString(targetLastModified.toPath(), Long.toString(dependencyFile.lastModified()));
+                Files.writeString(targetLastModifiedFile.toPath(), Long.toString(dependencyLastModified));
+                anyDependenciesModified = true;
             }
         }
-    }
-
-    private List<File> listExistingDependencies() {
-        if (providersDir.isDirectory()) {
-            File[] files = providersDir.listFiles(n -> n.getName().endsWith(".jar"));
-            if (files != null) {
-                return Arrays.stream(files).toList();
-            }
-        }
-        return List.of();
+        return anyDependenciesModified;
     }
 
     private String getDependencyJarName(KeycloakDependency dependency) {
@@ -98,16 +78,33 @@ public final class ProviderDeployer {
         return groupId + "__" + artifactId + ".jar";
     }
 
-    private void deleteNotRequestedDependencies() {
-        existingDependencies.stream()
-                .filter(f -> {
-                    String fileName = f.getName();
-                    return requestedDependencies.stream().noneMatch(d -> fileName.equals(getDependencyJarName(d)));
-                }).forEach(f -> {
-                    log.trace("Deleted non-requested provider: " + f.getAbsolutePath());
-                    FileUtils.delete(f);
-                    FileUtils.delete(new File(f.getAbsolutePath() + ".lastModified"));
-                });
+    private boolean deleteNotRequestedDependencies() {
+        Set<String> requestedJarNames = requestedDependencies.stream()
+                .map(this::getDependencyJarName)
+                .collect(Collectors.toSet());
+
+        List<File> toDelete = listExistingDependencies().stream()
+                .filter(f -> !requestedJarNames.contains(f.getName()))
+                .toList();
+
+        for (File f : toDelete) {
+            String path = f.getAbsolutePath();
+            log.trace("Deleted non-requested provider: " + path);
+            FileUtils.delete(f);
+            FileUtils.delete(new File(path + ".lastModified"));
+        }
+
+        return !toDelete.isEmpty();
+    }
+
+    private List<File> listExistingDependencies() {
+        if (providersDir.isDirectory()) {
+            File[] files = providersDir.listFiles(n -> n.getName().endsWith(".jar"));
+            if (files != null) {
+                return Arrays.stream(files).toList();
+            }
+        }
+        return List.of();
     }
 
     private Path getDependencyPath(KeycloakDependency d) {
@@ -120,6 +117,25 @@ public final class ProviderDeployer {
         }
 
         return Maven.resolveArtifact(d.getGroupId(), d.getArtifactId());
+    }
+
+    private long getMostRecentModification(Path path) throws IOException {
+        File file = path.toFile();
+        if (!file.exists()) {
+            return 0;
+        }
+
+        if (file.isFile()) {
+            return file.lastModified();
+        }
+
+        try (Stream<Path> stream = Files.walk(path)) {
+            return stream
+                    .filter(Files::isRegularFile)
+                    .mapToLong(p -> p.toFile().lastModified())
+                    .max()
+                    .orElse(0);
+        }
     }
 
 }
