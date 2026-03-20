@@ -35,6 +35,7 @@ import org.keycloak.representations.idm.AuthenticatorConfigRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.testframework.annotations.InjectEvents;
 import org.keycloak.testframework.annotations.InjectRealm;
+import org.keycloak.testframework.annotations.InjectUser;
 import org.keycloak.testframework.annotations.KeycloakIntegrationTest;
 import org.keycloak.testframework.events.EventAssertion;
 import org.keycloak.testframework.events.Events;
@@ -42,16 +43,16 @@ import org.keycloak.testframework.injection.LifeCycle;
 import org.keycloak.testframework.oauth.OAuthClient;
 import org.keycloak.testframework.oauth.annotations.InjectOAuthClient;
 import org.keycloak.testframework.realm.ManagedRealm;
+import org.keycloak.testframework.realm.ManagedUser;
 import org.keycloak.testframework.realm.RealmConfig;
 import org.keycloak.testframework.realm.RealmConfigBuilder;
+import org.keycloak.testframework.realm.UserConfig;
+import org.keycloak.testframework.realm.UserConfigBuilder;
 import org.keycloak.testframework.ui.annotations.InjectPage;
-import org.keycloak.testframework.ui.annotations.InjectWebDriver;
 import org.keycloak.testframework.ui.page.LoginTotpPage;
-import org.keycloak.testframework.ui.webdriver.ManagedWebDriver;
 import org.keycloak.testsuite.util.oauth.AccessTokenResponse;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -61,26 +62,22 @@ import org.junit.jupiter.api.Test;
 @KeycloakIntegrationTest
 public class ConditionalCredentialAuthenticatorTest {
 
-    @InjectRealm(fromJson = "/org/keycloak/tests/testrealm.json", config = OtpPolicyRealmConfig.class, lifecycle = LifeCycle.METHOD)
+    @InjectRealm(config = OtpPolicyRealmConfig.class, lifecycle = LifeCycle.METHOD)
     ManagedRealm realm;
 
-    @InjectOAuthClient(ref = "browser")
+    @InjectUser(config = OtpUserConfig.class)
+    ManagedUser user;
+
+    @InjectOAuthClient
     OAuthClient oauthClient;
 
     @InjectEvents
     Events events;
 
-    @InjectWebDriver
-    ManagedWebDriver webDriver;
-
     @InjectPage
     LoginTotpPage loginTotpPage;
 
-    @BeforeEach
-    void setup() {
-        webDriver.cookies().deleteAll();
-        events.clear();
-    }
+    private static final String OTP_SECRET = "DJmQfC73VGFhw7D4QJ8A";
 
     @Test
     void testPasswordIncluded() {
@@ -88,12 +85,12 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should be displayed
         loginTotpPage.assertCurrent();
-        loginTotpPage.login(new TimeBasedOTP().generateTOTP("DJmQfC73VGFhw7D4QJ8A"));
-        checkLoginOk("user-with-one-configured-otp");
+        loginTotpPage.login(new TimeBasedOTP().generateTOTP(OTP_SECRET));
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -102,10 +99,10 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should not be displayed
-        checkLoginOk("user-with-one-configured-otp");
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -114,12 +111,12 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should be displayed
         loginTotpPage.assertCurrent();
-        loginTotpPage.login(new TimeBasedOTP().generateTOTP("DJmQfC73VGFhw7D4QJ8A"));
-        checkLoginOk("user-with-one-configured-otp");
+        loginTotpPage.login(new TimeBasedOTP().generateTOTP(OTP_SECRET));
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -128,10 +125,10 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should not be displayed
-        checkLoginOk("user-with-one-configured-otp");
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -140,12 +137,12 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should be displayed
         loginTotpPage.assertCurrent();
-        loginTotpPage.login(new TimeBasedOTP().generateTOTP("DJmQfC73VGFhw7D4QJ8A"));
-        checkLoginOk("user-with-one-configured-otp");
+        loginTotpPage.login(new TimeBasedOTP().generateTOTP(OTP_SECRET));
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -154,10 +151,10 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should not be displayed
-        checkLoginOk("user-with-one-configured-otp");
+        checkLoginOk(user.getUsername());
     }
 
     @Test
@@ -166,12 +163,12 @@ public class ConditionalCredentialAuthenticatorTest {
 
         // login with username password
         oauthClient.openLoginForm();
-        oauthClient.fillLoginForm("user-with-one-configured-otp", "password");
+        oauthClient.fillLoginForm(user.getUsername(), user.getPassword());
 
         // 2FA with otp should be displayed
         loginTotpPage.assertCurrent();
-        loginTotpPage.login(new TimeBasedOTP().generateTOTP("DJmQfC73VGFhw7D4QJ8A"));
-        checkLoginOk("user-with-one-configured-otp");
+        loginTotpPage.login(new TimeBasedOTP().generateTOTP(OTP_SECRET));
+        checkLoginOk(user.getUsername());
     }
 
     private void configureConditionalCurrentCredentialFlow(Boolean included, String... credentials) {
@@ -233,7 +230,7 @@ public class ConditionalCredentialAuthenticatorTest {
                 .type(EventType.CODE_TO_TOKEN);
     }
 
-    public static class OtpPolicyRealmConfig implements RealmConfig {
+    private static class OtpPolicyRealmConfig implements RealmConfig {
         @Override
         public RealmConfigBuilder configure(RealmConfigBuilder realm) {
             return realm.update(rep -> {
@@ -245,16 +242,20 @@ public class ConditionalCredentialAuthenticatorTest {
                 rep.setOtpPolicyPeriod(30);
                 rep.setOtpPolicyType("totp");
                 rep.setOtpPolicyCodeReusable(Boolean.TRUE);
-                // add missing user profile attributes to avoid VERIFY_PROFILE required action
-                if (rep.getUsers() != null) {
-                    rep.getUsers().stream()
-                            .filter(u -> u.getFirstName() == null)
-                            .forEach(u -> {
-                                u.setFirstName("First");
-                                u.setLastName("Last");
-                            });
-                }
             });
+        }
+    }
+
+    private static class OtpUserConfig implements UserConfig {
+
+        @Override
+        public UserConfigBuilder configure(UserConfigBuilder user) {
+            return user.username("user-with-one-configured-otp")
+                    .name("Test", "User")
+                    .email("otp1@redhat.com")
+                    .enabled(true)
+                    .password("password")
+                    .totpSecret(OTP_SECRET);
         }
     }
 }
