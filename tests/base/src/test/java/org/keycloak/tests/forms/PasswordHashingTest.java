@@ -22,9 +22,11 @@ import java.util.List;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import jakarta.persistence.EntityManager;
 import jakarta.ws.rs.BadRequestException;
 
 import org.keycloak.common.util.SecretGenerator;
+import org.keycloak.connections.jpa.JpaConnectionProvider;
 import org.keycloak.credential.CredentialModel;
 import org.keycloak.credential.hash.PasswordHashProvider;
 import org.keycloak.credential.hash.Pbkdf2PasswordHashProvider;
@@ -36,8 +38,10 @@ import org.keycloak.crypto.hash.Argon2PasswordHashProviderFactory;
 import org.keycloak.exportimport.util.ExportUtils;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.cache.UserCache;
 import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.models.credential.dto.PasswordCredentialData;
+import org.keycloak.models.jpa.entities.CredentialEntity;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.ErrorRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -50,19 +54,15 @@ import org.keycloak.testframework.injection.LifeCycle;
 import org.keycloak.testframework.oauth.OAuthClient;
 import org.keycloak.testframework.oauth.annotations.InjectOAuthClient;
 import org.keycloak.testframework.realm.ManagedRealm;
-import org.keycloak.testframework.realm.UserConfigBuilder;
 import org.keycloak.testframework.remote.runonserver.InjectRunOnServer;
 import org.keycloak.testframework.remote.runonserver.RunOnServerClient;
 import org.keycloak.testframework.ui.annotations.InjectPage;
-import org.keycloak.testframework.ui.annotations.InjectWebDriver;
 import org.keycloak.testframework.ui.page.LoginPage;
-import org.keycloak.testframework.ui.webdriver.ManagedWebDriver;
 import org.keycloak.tests.utils.admin.AdminApiUtil;
 import org.keycloak.testsuite.util.AccountHelper;
 
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -82,9 +82,6 @@ public class PasswordHashingTest {
     @InjectOAuthClient
     OAuthClient oauthClient;
 
-    @InjectWebDriver
-    ManagedWebDriver webDriver;
-
     @InjectPage
     LoginPage loginPage;
 
@@ -93,11 +90,6 @@ public class PasswordHashingTest {
 
     @InjectCryptoHelper
     CryptoHelper cryptoHelper;
-
-    @BeforeEach
-    void setup() {
-        webDriver.cookies().deleteAll();
-    }
 
     @Test
     void testSetInvalidProvider() {
@@ -150,12 +142,12 @@ public class PasswordHashingTest {
 
         String credentialId = credential.getId();
         runOnServer.run(session -> {
-            jakarta.persistence.EntityManager em = session.getProvider(org.keycloak.connections.jpa.JpaConnectionProvider.class).getEntityManager();
-            org.keycloak.models.jpa.entities.CredentialEntity credentialEntity = em.find(org.keycloak.models.jpa.entities.CredentialEntity.class, credentialId);
+            EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+            CredentialEntity credentialEntity = em.find(CredentialEntity.class, credentialId);
             // adding a dummy value to the salt column to trigger migration in JpaUserCredentialStore#toModel on next fetch of the credential
             credentialEntity.setSalt("dummy".getBytes(java.nio.charset.StandardCharsets.UTF_8));
             // Clearing the user cache as we updated the database directly
-            session.getProvider(org.keycloak.models.cache.UserCache.class).clear();
+            session.getProvider(UserCache.class).clear();
         });
 
         oauthClient.doLogin(username, password);
